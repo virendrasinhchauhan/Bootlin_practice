@@ -1,0 +1,242 @@
+\section{Marvell EBU mainlining}
+
+\begin{frame}{Marvell EBU mainlining}
+
+\begin{itemize}
+\item Collaboration between Marvell and Free Electrons
+\item Goal is to integrate in the upstream Linux kernel the support
+  for Marvell EBU processors
+\item Started in April 2012, with the Armada 370/XP
+\item Extended to cover Armada 375/38x in the second half of 2013
+\item On-going project
+\item On Free Electrons side:
+  \begin{itemize}
+  \item Grégory Clement
+  \item Ezequiel Garcia
+  \item Thomas Petazzoni
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Process}
+  \begin{center}
+    \includegraphics[width=\textwidth]{slides/kernel-marvell-armada/process.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Submission}
+  \begin{center}
+    \includegraphics[width=\textwidth]{slides/kernel-marvell-armada/submission.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Timeline (1)}
+  \begin{center}
+    \includegraphics[width=\textwidth]{slides/kernel-marvell-armada/timeline1.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Timeline (2)}
+  \begin{center}
+    \includegraphics[width=\textwidth]{slides/kernel-marvell-armada/timeline2.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Using the result}
+
+\begin{itemize}
+\item \code{make mvebu_defconfig} (to support just mvebu platforms) or
+  \code{make multi_v7_defconfig} (for the ARMv7 multiplatform kernel)
+\item \code{make}
+  \begin{itemize}
+  \item Kernel image: \code{arch/arm/boot/zImage}
+  \item Device Tree blobs: \code{arch/arm/boot/dts/armada-*.dtb}
+  \end{itemize}
+\item From U-Boot
+  \begin{itemize}
+  \item If DT capable: \code{bootz <kerneladdr> - <dtbaddr>}
+  \item If not DT capable
+    \begin{itemize}
+    \item Kernel must have \code{CONFIG_ARM_APPENDED_DTB=y}, and
+      optionally \code{CONFIG_ARM_ATAG_DTB_COMPAT=y}.
+    \item \code{cat zImage <dtb> > zImage.<foo>}
+    \item \code{mkimage -A arm -O linux -C none -a <loadaddr> -e <entrypoint> -d zImage.<foo> uImage.<foo>}
+    \item \code{bootm <kerneladdr>}
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Where is the code: platform code (1)}
+
+\begin{itemize}
+\item One single directory for all Marvell EBU platforms:
+  \code{arch/arm/mach-mvebu/}
+\item Currently has Armada 370, XP, 375, 38x, but also Dove and
+  Kirkwood.
+\item Will ultimately also have Orion5x support, and possibly MV78xx0.
+\item Goal is to remove \code{mach-dove}, \code{mach-orion5x},
+  \code{mach-mv78xx0} and \code{plat-orion}
+\item Platform code should be as minimal as possible: most of the code
+  should go in drivers.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Where is the code: platform code (2)}
+
+\footnotesize
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+\item {\bf board-v7.c} Core file for v7 platforms, includes the
+  \code{DT_MACHINE_START} definition.
+\item {\bf coherency.c} Coherency fabric code (for CPU coherency on
+  A370/XP and I/O coherency 370, XP, 375 and 38x)
+\item {\bf cpu-reset.c} Minimal driver to handle the CPU reset
+  register, used for SMP boot.
+\item {\bf dove.c} Core file for Dove platforms. Should be merged with
+  \code{board-v7.c} in the future.
+\item {\bf kirkwood.c} Core file for Kirkwood platforms. Should be
+  renamed \code{board-v5.c} in the future.
+\item {\bf kirkwood-pm.c} Suspend/resume support for Kirkwood
+\end{itemize}
+\column{0.5\textwidth}
+\begin{itemize}
+\item {\bf mvebu-soc-id.c} SoC identification for 370, XP, 375, 38x
+\item {\bf netxbig.c} Remaining board support for Kirkwood. Should be
+  removed at some point.
+\item {\bf platsmp.c, platsmp-a9.c, headsmp.S, headsmp-a9.S} SMP
+  support for Armada 370/XP and Armada 375/38x
+\item {\bf pmsu.c} Power Management Service Unit of Armada 370, XP,
+  38x (used for SMP, cpuidle, cpufreq, etc.)
+\item {\bf system-controller.c} Used for platform reset, SMP boot on
+  some platforms.
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Where is the code: Device Tree}
+
+In \code{arch/arm/boot/dts}
+\footnotesize
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+\item armada-370.dtsi
+\item armada-370-xp.dtsi
+\item armada-375.dtsi
+\item armada-380.dtsi
+\item armada-385.dtsi
+\item armada-38x.dtsi
+\item armada-xp.dtsi
+\item armada-xp-mv78230.dtsi
+\item armada-xp-mv78260.dtsi
+\item armada-xp-mv78460.dtsi
+\end{itemize}
+\column{0.5\textwidth}
+\begin{itemize}
+\item armada-370-db.dts
+\item armada-370-mirabox.dts
+\item armada-370-netgear-rn102.dts
+\item armada-370-netgear-rn104.dts
+\item armada-370-rd.dts
+\item armada-375-db.dts
+\item armada-385-db.dts
+\item armada-385-rd.dts
+\item armada-xp-axpwifiap.dts
+\item armada-xp-db.dts
+\item armada-xp-gp.dts
+\item armada-xp-matrix.dts
+\item armada-xp-netgear-rn2120.dts
+\item armada-xp-openblocks-ax3-4.dts
+\end{itemize}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Where is the code: drivers (1)}
+
+\begin{itemize}
+\item Clock drivers: \code{drivers/clk/mvebu}
+\item L2 cache: \code{arch/arm/mm/cache-l2x0.c} (for both Aurora and PL310)
+\item MPIC: \code{drivers/irqchip/irq-armada-370-xp.c}, includes MSI
+  and IPI support
+\item GIC: \code{drivers/irqchip/irq-gic.c}
+\item Marvell timer: \code{drivers/clocksource/time-armada-370-xp.c}
+\item ARM timer: \code{arch/arm/kernel/smp_twd.c}
+\item Pin-muxing drivers (MPPs): \code{drivers/pinctrl/mvebu}
+\item GPIO driver: \code{drivers/gpio/gpio-mvebu.c}
+\item Watchdog: \code{drivers/watchdog/orion_wdt.c}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Where is the code: drivers (2)}
+
+\begin{itemize}
+\item MBus: \code{drivers/bus/mvebu-mbus.c}, configuration of CPU to
+  device windows, provide an API for drivers to query SDRAM windows
+\item Device Bus: \code{drivers/memory/mvebu-devbus.c}, for NOR
+  support mainly
+\item PCIe: \code{drivers/pci/host/pci-mvebu.c}. Includes a PCI-to-PCI
+  bridge emulation for dynamic MBus window allocation.
+\item Network 370/XP/38x: \code{drivers/net/ethernet/marvell/mvneta.c}
+\item Network 375: \code{drivers/net/ethernet/marvell/mvpp2.c}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Where is the code: drivers (3)}
+
+\begin{itemize}
+\item SATA 370/XP/375: \code{drivers/ata/sata_mv.c} (existing driver,
+  shared with Kirkwood, etc.)
+\item SATA 38x: \code{drivers/ata/ahci_mvebu.c}
+\item RTC, \code{drivers/rtc/rtc-mv.c} (existing driver, used on Kirkwood)
+\item SPI, \code{drivers/spi/spi-orion.c} (existing driver, used on Kirkwood)
+\item I2C, \code{drivers/i2c/busses/i2c-mv64xxx.c} (existing driver,
+  extended to support the transaction generator)
+\item Serial, \code{drivers/tty/serial/8250/}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Where is the code: drivers (4)}
+
+\begin{itemize}
+\item USB, \code{drivers/usb/host/ehci-orion.c} (existing driver, used
+  on Kirkwood), \code{drivers/usb/host/xhci-plat.c} (for XHCI)
+\item NAND, \code{drivers/mtd/nand/pxa3xx_nand.c} (existing driver,
+  but significantly extended to support large pages)
+\item SDIO, \code{drivers/mmc/host/mvsdio.c} (existing driver, used on
+  Kirkwood)
+\item Thermal, \code{drivers/thermal/armada_thermal.c}, new driver
+\item XOR, \code{drivers/dma/mv_xor.c} (existing driver, used on
+  Kirkwood)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Programming practices}
+  \begin{itemize}
+  \item Device Tree
+    \begin{itemize}
+    \item Problem of stability: once accepted, a Device Tree binding
+      cannot be changed.
+    \item Need to identify {\em hardware blocks}. For some core SoC
+      features, lack of good separation between hardware blocks, difficult
+      to create nodes in the Device Tree.
+    \end{itemize}
+  \item Multiplatform
+    \begin{itemize}
+    \item One single kernel image for all v6/v7 platforms
+    \item Everything must be runtime detected (from the Device Tree or by
+      looking at the hardware)
+    \item {\bf No more compile time conditionals!}
+    \end{itemize}
+  \end{itemize}
+\end{frame}

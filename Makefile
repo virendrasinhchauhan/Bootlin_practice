@@ -57,6 +57,7 @@ KERNEL_SLIDES = \
 		kernel-driver-development-lab-debugging \
 		kernel-porting-title \
 		kernel-porting-content \
+		kernel-marvell-armada \
 		kernel-power-management-title \
 		kernel-power-management-content \
 		kernel-development-process-title \
