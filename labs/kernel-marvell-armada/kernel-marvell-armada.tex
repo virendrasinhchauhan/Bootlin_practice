@@ -1,0 +1,224 @@
+\subchapter{Marvell Armada}{Objective: build and boot a mainline kernel}
+
+During this lab, you will:
+
+\begin{itemize}
+\item Build a little endian mainline kernel and boot it on Armada 385 RD
+\item Explore a few useful {\em debugfs} files
+\item Build a big endian mainline kernel and boot it on Armada 385 RD
+\end{itemize}
+
+\section{Getting the kernel sources}
+
+Checkout the \code{v3.16-rc6} tag, which will allow us to test one of
+the latest release candidate of the kernel. If there is a newer one,
+you can also try it.
+
+Apply the \code{scu-fix.patch} patch available from the labs data
+directory (\code{$HOME/felabs/linux/marvell-armada}). It works around
+a problem in the Marvell U-Boot bootloader, which has been fixed in
+more recent versions of U-Boot (maybe it is even already fixed on the
+board you're using).
+
+\section{Configuring the kernel}
+
+Since we'll do both a little endian build and a big endian build,
+we'll use out of tree build. This means we'll have one source tree,
+and two separate build trees. Start by creating a build directory:
+
+\begin{verbatim}
+mkdir $HOME/felabs/linux/mvebu-le
+\end{verbatim}
+
+And move to this directory.
+
+We'll start with the \code{mvebu_v7_defconfig}, which is the reference
+configuration for ARMv7 Marvell EBU platforms in the kernel (i.e
+Armada 370, XP, 375, 38x and Dove) :
+
+\begin{verbatim}
+make -C $HOME/felabs/linux/src O=$(pwd) ARCH=arm mvebu_v7_defconfig
+\end{verbatim}
+
+This command tells \code{make} to use the Makefile in
+\code{$HOME/felabs/linux/src}, but also tells the kernel that the
+current directory (passed through \code{O=}) should be used as the
+build tree. After this command has been executed, a small {\em
+  wrapper} Makefile has been generated in the build directory, so we
+don't have to pass \code{-C} and \code{O=} again.
+
+We now need to refine the configuration, so run:
+
+\begin{verbatim}
+make ARCH=arm menuconfig
+\end{verbatim}
+
+We will have to:
+
+\begin{itemize}
+\item In {\em General setup} $\rightarrow$ {\em Initial RAM filesystem
+    and RAM disk (initramfs/initrd) support} $\rightarrow$ {\em
+    Initramfs source file(s)}, set the path to the pre-built {\em
+    initramfs} we are providing. It is available in
+  \code{$HOME/felabs/linux/marvell-armada/rootfs.cpio.le}.
+\item In {\em System Type}, explore the options available under {\em
+    Marvell Engineering Business Unit (MVEBU) SoCs}
+\item In {\em Boot Options}, make sure {\em Use appended device tree
+    blob to zImage} and {\em Supplement the appended DTB with
+    traditional ATAG information} are enabled. The first option allows
+  to use a Device Tree appended to the zImage, which is useful on
+  platforms where the bootloader does not have Device Tree
+  support. The second allows the kernel to read the legacy ATAGs
+  information passed by a non-DT-capable bootloader.
+\item In {\em Kernel hacking}, enable the {\em Kernel low-level
+    debugging functions} option. Then you should choose the right UART
+  for the platform we're using. For Marvell EBU platforms, there are
+  two options:
+  \begin{itemize}
+  \item {\em Kernel low-level debugging messages via MVEBU UART (old
+      bootloaders)}, which uses the UART at physical address
+    \code{0xd0012000}. This is what is used on old Armada 370/XP
+    platforms where the bootloader was leaving the internal registers
+    mapped at \code{0xd0000000}.
+  \item {\em Kernel low-level debugging messages via MVEBU UART (new
+      bootloaders)}, which uses the UART at physical address
+    \code{0xf1012000}. This is what should be used with recent Armada
+    370/XP platforms, and on all Armada 375/38x platforms. Therefore,
+    select this choice.
+  \end{itemize}
+\item Still in {\em Kernel hacking}, make sure to enable {\em Early
+    printk}.
+\item Also, our initramfs makes the assumption that {\em devtmpfs}
+  will be available. Therefore, in {\em Device Drivers} $\rightarrow$
+  {\em Generic Driver Options}, enable {\em Maintain a devtmpfs
+    filesystem to mount at /dev} and {\em Automount devtmpfs at /dev,
+    after the kernel mounted the rootfs}.
+\end{itemize}
+
+\section{Building the kernel}
+
+Now that the configuration is done, it's time to build the kernel:
+
+\begin{verbatim}
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j4
+\end{verbatim}
+
+Since the bootloader on the Armada 385 RD board does not have DT
+support (at least in the \code{Marvell version: 2014_T1.0_eng_drop_v6}
+we have used), we will use the appended Device Tree technique. So,
+first, append the Device Tree blob to the zImage:
+
+\begin{verbatim}
+cat arch/arm/boot/zImage arch/arm/boot/dts/armada-385-rd.dtb > zImage-with-dtb
+\end{verbatim}
+
+Now, we need to produce a U-Boot {\em uImage}. In order to avoid the
+relocation of the kernel, we'll set the load address in the {\em
+  uImage} to be the same as the place where we will actually load the
+kernel in memory, and we'll set the entry point 64 bytes after that,
+to skip the {\em uImage header}.
+
+\begin{verbatim}
+mkimage -A arm -O linux -T kernel -C none -a 0x2000000 -e 0x2000040 -d zImage-with-dtb uImage-with-dtb
+\end{verbatim}
+
+Our \code{uImage-with-dtb} is ready for booting.
+
+\section{Booting the kernel}
+
+In U-Boot, adjust the \code{serverip} and \code{ipaddr} environment
+variables to match your environment.
+
+Then, define the kernel command line argument:
+
+\begin{verbatim}
+setenv bootargs console=ttyS0,115200 earlyprintk
+\end{verbatim}
+
+Load the kernel image in memory:
+
+\begin{verbatim}
+tftp 0x2000000 uImage-with-dtb
+\end{verbatim}
+
+And boot:
+
+\begin{verbatim}
+bootm
+\end{verbatim}
+
+At the end of the boot, the {\em Buildroot} login prompt should
+appear. You can log in as root and start exploring the system.
+
+\section{Exploring useful debugfs entries}
+
+There are a few interesting things to look at in {\em debugfs}, so
+we'll start by mounting debugfs:
+
+\begin{verbatim}
+mount -t debugfs none /sys/kernel/debug/
+\end{verbatim}
+
+Then, have a look at:
+
+\begin{itemize}
+\item \code{/sys/kernel/debug/mvebu-mbus/devices}, which contains a
+  list of the CPU $\rightarrow$ devices MBus windows that are
+  currently configured. You can see their base, size, MBus target ID
+  and MBus attribute ID.
+\item \code{/sys/kernel/debug/mvebu-mbus/sdram} contains the list of
+  the CPU $\rightarrow$ memory MBus windows.
+\item \code{/sys/kernel/debug/clk/clk_summary} contains the list of
+  the clocks, whether they are enabled or not, and their current rate.
+\item
+  \code{/sys/kernel/debug/pinctrl/f1018000.pinctrl/pinconf-groups},
+  and other files in
+  \code{/sys/kernel/debug/pinctrl/f1018000.pinctrl/}, allows to
+  explore the {\em pinctrl} configuration. On Marvell EBU platforms,
+  this is used to configure the MPPs.
+\item \code{/sys/kernel/irq_domain_mapping} to look at the virtual to
+  physical IRQ mappings.
+\end{itemize}
+
+\section{Testing the big endian kernel}
+
+Since the big endian kernel is completely different from the little
+endian one in terms of generated code, we'll use a separate build
+tree. Let's create it first:
+
+\begin{verbatim}
+mkdir $HOME/felabs/linux/mvebu-be
+\end{verbatim}
+
+Go in this directory, and then copy the configuration file we have
+created for the little endian build:
+
+\begin{verbatim}
+cp $HOME/felabs/linux/mvebu-le/.config .config
+\end{verbatim}
+
+Now, we'll adjust the configuration:
+
+\begin{verbatim}
+make -C $HOME/felabs/linux/src O=$(pwd) ARCH=arm menuconfig
+\end{verbatim}
+
+Note that since it's the first time we run a \code{make} command from
+this build directory, we explicitly pass \code{-C} and \code{O=}, so
+that the {\em wrapper} Makefile gets generated.
+
+In the configuration, adjust the following items:
+
+\begin{itemize}
+\item Adjust the path of the {\em initramfs}, to point to
+  \code{$HOME/felabs/linux/marvell-armada/rootfs.cpio.be}, which
+  contains a big endian userspace.
+\item In {\em System type}, enable the {\em Build big-endian kernel}
+  option.
+\end{itemize}
+
+Start the build of your kernel, generate the appended zImage, then the
+uImage, and boot your kernel. You can verify with \code{uname} that
+you are indeed running a \code{armv7b} system, i.e a big-endian ARM
+system.
+

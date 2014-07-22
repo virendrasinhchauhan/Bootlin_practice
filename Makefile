@@ -272,6 +272,7 @@ KERNEL_LABS   = setup \
 		kernel-serial-interrupt \
 		kernel-locking \
 		kernel-debugging \
+		kernel-marvell-armada \
 		kernel-git \
 #		backup # Currently broken for kernel course
 
