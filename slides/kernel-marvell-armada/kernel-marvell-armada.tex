@@ -221,6 +221,116 @@ In \code{arch/arm/boot/dts}
 
 \end{frame}
 
+\begin{frame}[fragile]{MBus binding, SoC level (1)}
+
+\tiny
+\begin{minted}{perl}
+#define MBUS_ID(target,attributes) (((target) << 24) | ((attributes) << 16))
+
+/ {
+        soc {
+                compatible = "marvell,armada375-mbus", "marvell,armada370-mbus", "simple-bus";
+                #address-cells = <2>;
+                #size-cells = <1>;
+                pcie-mem-aperture = <0xe0000000 0x8000000>;
+                pcie-io-aperture  = <0xe8000000 0x100000>;
+
+                bootrom {
+                        compatible = "marvell,bootrom";
+                        reg = <MBUS_ID(0x01, 0x1d) 0 0x100000>;
+                };
+
+                devbus-bootcs {
+                        compatible = "marvell,mvebu-devbus";
+                        reg = <MBUS_ID(0xf0, 0x01) 0x10400 0x8>;
+                        ranges = <0 MBUS_ID(0x01, 0x2f) 0 0xffffffff>;
+                        ...
+                };
+
+                internal-regs {
+                        compatible = "simple-bus";
+                        #address-cells = <1>;
+                        #size-cells = <1>;
+                        ranges = <0 MBUS_ID(0xf0, 0x01) 0 0x100000>;
+
+                        scu@c000 {
+                                compatible = "arm,cortex-a9-scu";
+                                reg = <0xc000 0x58>;
+                        };
+                };
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]{MBus binding, SoC level (2)}
+
+\tiny
+\begin{minted}{perl}
+                pcie-controller {
+                        compatible = "marvell,armada-370-pcie";
+                        device_type = "pci";
+                        #address-cells = <3>;
+                        #size-cells = <2>;
+                        msi-parent = <&mpic>;
+                        bus-range = <0x00 0xff>;
+
+                        ranges =
+                               <0x82000000 0 0x40000 MBUS_ID(0xf0, 0x01) 0x40000 0 0x00002000
+                                0x82000000 0 0x44000 MBUS_ID(0xf0, 0x01) 0x44000 0 0x00002000
+                                0x82000000 0x1 0       MBUS_ID(0x04, 0xe8) 0 1 0 /* Port 0 MEM */
+                                0x81000000 0x1 0       MBUS_ID(0x04, 0xe0) 0 1 0 /* Port 0 IO  */
+                                0x82000000 0x2 0       MBUS_ID(0x04, 0xd8) 0 1 0 /* Port 1 MEM */
+                                0x81000000 0x2 0       MBUS_ID(0x04, 0xd0) 0 1 0 /* Port 1 IO  */>;
+
+                        pcie@1,0 {
+                                device_type = "pci";
+                                assigned-addresses = <0x82000800 0 0x40000 0 0x2000>;
+                                reg = <0x0800 0 0 0 0>;
+                                #address-cells = <3>;
+                                #size-cells = <2>;
+                                #interrupt-cells = <1>;
+                                ranges = <0x82000000 0 0 0x82000000 0x1 0 1 0
+                                          0x81000000 0 0 0x81000000 0x1 0 1 0>;
+                                interrupt-map-mask = <0 0 0 0>;
+                                interrupt-map = <0 0 0 0 &gic GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+                                ...
+                        };
+                };
+        };
+};
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{MBus binding, board level}
+
+Armada 375 DB
+
+{\tiny
+\begin{minted}{perl}
+/ {
+        soc {
+                ranges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+                          MBUS_ID(0x01, 0x1d) 0 0xfff00000 0x100000>;
+        };
+};
+\end{minted}
+}
+
+Armada XP GP
+
+{\tiny
+\begin{minted}{perl}
+/ {
+        soc {
+                ranges = <MBUS_ID(0xf0, 0x01) 0 0 0xf1000000 0x100000
+                          MBUS_ID(0x01, 0x1d) 0 0 0xfff00000 0x100000
+                          MBUS_ID(0x01, 0x2f) 0 0 0xf0000000 0x1000000>;
+        };
+};
+\end{minted}
+}
+\end{frame}
+
 \begin{frame}{Programming practices}
   \begin{itemize}
   \item Device Tree
