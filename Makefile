@@ -133,6 +133,7 @@ ANDROID_SLIDES = \
 		android-introduction-features \
 		android-introduction-history \
 		android-introduction-architecture \
+		android-introduction-hardware \
 		android-introduction-lab \
 		android-source-title \
 		android-source-obtaining \
@@ -387,6 +388,8 @@ endif
 SLIDES_COMMON_AFTER  = common/slide-footer.tex
 endif
 
+TRAINING = $(SLIDES_TRAINING)
+
 ifeq ($(SLIDES_CHAPTERS),)
 $(error "No chapter to build, maybe you're building a single chapter whose name doesn't start with a training session name")
 endif
@@ -431,31 +434,21 @@ endif
 #
 
 ifdef LABS
+ifeq ($(firstword $(subst -, , $(LABS))),full)
+LABS_TRAINING      = $(lastword $(subst -, , $(LABS)))
 LABS_HEADER        = common/labs-header.tex
+LABS_VARSFILE      = common/$(LABS_TRAINING)-labs-vars.tex
+LABS_CHAPTERS      = $($(call UPPERCASE, $(LABS_TRAINING))_LABS)
 LABS_FOOTER        = common/labs-footer.tex
-# Compute the set of chapters to build depending on the name of the
-# PDF file that was requested.
-ifeq ($(LABS),full-kernel)
-LABS_VARSFILE      = common/kernel-labs-vars.tex
-LABS_CHAPTERS      = $(KERNEL_LABS)
-else ifeq ($(LABS),full-sysdev)
-LABS_VARSFILE      = common/sysdev-labs-vars.tex
-LABS_CHAPTERS      = $(SYSDEV_LABS)
-else ifeq ($(LABS),full-android)
-LABS_VARSFILE      = common/android-labs-vars.tex
-LABS_CHAPTERS      = $(ANDROID_LABS)
-else ifeq ($(LABS),full-boottime)
-LABS_VARSFILE      = common/boottime-labs-vars.tex
-LABS_CHAPTERS      = $(BOOTTIME_LABS)
-else ifeq ($(LABS),full-yocto)
-LABS_VARSFILE      = common/yocto-labs-vars.tex
-LABS_CHAPTERS      = $(YOCTO_LABS)
 else
+LABS_TRAINING      = $(firstword $(subst -, , $(LABS)))
 LABS_VARSFILE      = common/single-lab-vars.tex
 LABS_CHAPTERS      = $(LABS)
 LABS_HEADER        = common/single-lab-header.tex
 LABS_FOOTER        = common/labs-footer.tex
 endif
+
+TRAINING           = $(LABS_TRAINING)
 
 # Compute the set of corresponding .tex files and pictures
 LABS_TEX      = \
@@ -556,7 +549,7 @@ $(OUTDIR)/%.jpg: %.jpg
 $(VARS): FORCE
 	@mkdir -p $(dir $@)
 	/bin/echo "\def \sessionurl {$(SESSION_URL)}" > $@
-	/bin/echo "\def \training {$(SLIDES_TRAINING)}" >> $@
+	/bin/echo "\def \training {$(TRAINING)}" >> $@
 
 clean:
 	$(RM) -rf $(OUTDIR) *.pdf
