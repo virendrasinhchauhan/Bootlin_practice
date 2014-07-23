@@ -15,7 +15,7 @@ the latest release candidate of the kernel. If there is a newer one,
 you can also try it.
 
 Apply the \code{scu-fix.patch} patch available from the labs data
-directory (\code{$HOME/felabs/kernel/marvell-armada}). It works around
+directory (\code{$HOME/felabs-kernel/marvell-armada}). It works around
 a problem in the Marvell U-Boot bootloader, which has been fixed in
 more recent versions of U-Boot (maybe it is even already fixed on the
 board you're using).
@@ -27,7 +27,7 @@ we'll use out of tree build. This means we'll have one source tree,
 and two separate build trees. Start by creating a build directory:
 
 \begin{verbatim}
-mkdir $HOME/felabs/kernel/mvebu-le
+mkdir $HOME/felabs-kernel/mvebu-le
 \end{verbatim}
 
 And move to this directory.
@@ -37,11 +37,11 @@ configuration for ARMv7 Marvell EBU platforms in the kernel (i.e
 Armada 370, XP, 375, 38x and Dove) :
 
 \begin{verbatim}
-make -C $HOME/felabs/kernel/src O=$(pwd) ARCH=arm mvebu_v7_defconfig
+make -C $HOME/felabs-kernel/src O=$(pwd) ARCH=arm mvebu_v7_defconfig
 \end{verbatim}
 
 This command tells \code{make} to use the Makefile in
-\code{$HOME/felabs/kernel/src}, but also tells the kernel that the
+\code{$HOME/felabs-kernel/src}, but also tells the kernel that the
 current directory (passed through \code{O=}) should be used as the
 build tree. After this command has been executed, a small {\em
   wrapper} Makefile has been generated in the build directory, so we
@@ -60,7 +60,7 @@ We will have to:
     and RAM disk (initramfs/initrd) support} $\rightarrow$ {\em
     Initramfs source file(s)}, set the path to the pre-built {\em
     initramfs} we are providing. It is available in
-  \code{$HOME/felabs/kernel/marvell-armada/rootfs.cpio.le}.
+  \code{$HOME/felabs-kernel/marvell-armada/rootfs.cpio.le}.
 \item In {\em System Type}, explore the options available under {\em
     Marvell Engineering Business Unit (MVEBU) SoCs}
 \item In {\em Boot Options}, make sure {\em Use appended device tree
@@ -187,20 +187,20 @@ endian one in terms of generated code, we'll use a separate build
 tree. Let's create it first:
 
 \begin{verbatim}
-mkdir $HOME/felabs/kernel/mvebu-be
+mkdir $HOME/felabs-kernel/mvebu-be
 \end{verbatim}
 
 Go in this directory, and then copy the configuration file we have
 created for the little endian build:
 
 \begin{verbatim}
-cp $HOME/felabs/kernel/mvebu-le/.config .config
+cp $HOME/felabs-kernel/mvebu-le/.config .config
 \end{verbatim}
 
 Now, we'll adjust the configuration:
 
 \begin{verbatim}
-make -C $HOME/felabs/kernel/src O=$(pwd) ARCH=arm menuconfig
+make -C $HOME/felabs-kernel/src O=$(pwd) ARCH=arm menuconfig
 \end{verbatim}
 
 Note that since it's the first time we run a \code{make} command from
@@ -211,7 +211,7 @@ In the configuration, adjust the following items:
 
 \begin{itemize}
 \item Adjust the path of the {\em initramfs}, to point to
-  \code{$HOME/felabs/kernel/marvell-armada/rootfs.cpio.be}, which
+  \code{$HOME/felabs-kernel/marvell-armada/rootfs.cpio.be}, which
   contains a big endian userspace.
 \item In {\em System type}, enable the {\em Build big-endian kernel}
   option.
