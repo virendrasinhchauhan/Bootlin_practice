@@ -12,8 +12,10 @@
 \item On Free Electrons side:
   \begin{itemize}
   \item Grégory Clement
-  \item Ezequiel Garcia
+  \item Ezequiel Garcia (stopped since December 2014)
   \item Thomas Petazzoni
+  \item Boris Brezillon (crypto)
+  \item Maxime Ripard (started January 2015)
   \end{itemize}
 \end{itemize}
 
@@ -93,8 +95,8 @@
 \begin{itemize}
 \item {\bf board-v7.c} Core file for v7 platforms, includes the
   \code{DT_MACHINE_START} definition.
-\item {\bf coherency.c} Coherency fabric code (for CPU coherency on
-  A370/XP and I/O coherency 370, XP, 375 and 38x)
+\item {\bf coherency.c, coherency_ll.S} Coherency fabric code (for CPU
+  coherency on A370/XP and I/O coherency 370, XP, 375 and 38x)
 \item {\bf cpu-reset.c} Minimal driver to handle the CPU reset
   register, used for SMP boot.
 \item {\bf dove.c} Core file for Dove platforms. Should be merged with
@@ -110,8 +112,9 @@
   removed at some point.
 \item {\bf platsmp.c, platsmp-a9.c, headsmp.S, headsmp-a9.S} SMP
   support for Armada 370/XP and Armada 375/38x
-\item {\bf pmsu.c} Power Management Service Unit of Armada 370, XP,
-  38x (used for SMP, cpuidle, cpufreq, etc.)
+\item {\bf pm.c, pm-board.c} Suspend/resume support for Armada XP
+\item {\bf pmsu.c, pmsu_ll.S} Power Management Service Unit of Armada
+  370, XP, 38x (used for SMP, cpuidle, cpufreq, etc.)
 \item {\bf system-controller.c} Used for platform reset, SMP boot on
   some platforms.
 \end{itemize}
