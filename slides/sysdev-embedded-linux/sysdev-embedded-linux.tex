@@ -516,7 +516,7 @@ met:
     \begin{itemize}
     \item Allows to decode/encode a wide variety of codecs.
     \item Supports hardware encoders and decoders through plugins,
-      proprietary/specific plugins are often provider by SoC vendors.
+      proprietary/specific plugins are often provided by SoC vendors.
     \end{itemize}
   \item {\bf alsa-lib}, the user space tools associated to the ALSA sound
     kernel subsystem
@@ -544,8 +544,8 @@ met:
     \item Windows and transparency
     \item Image loading and video display
     \end{itemize}
-  \item But also handles input event handling: mouse, keyboard, joystick,
-    touchscreen, etc.
+  \item But also handles input event handling: mice, keyboards,
+        joysticks, touchscreens, etc.
   \item Provides accelerated graphic operations on a few hardware
     platforms
   \item Single-application by default, but multiple applications can
@@ -649,12 +649,12 @@ met:
     \column{0.8\textwidth}
     \begin{itemize}
     \item Intended to be a simpler replacement for X
-    \item {\em Wayland is a protocol for a compositor to talk to 
+    \item {\em Wayland is a protocol for a compositor to talk to
     its clients as well as a C library implementation of that protocol.}
     \item Weston: a minimal and fast reference implementation
           of a Wayland compositor, and is suitable for many embedded
           and mobile use cases.
-    \item Still experimental. Porting Gtk and Qt 
+    \item Still experimental. Porting Gtk and Qt
           to Wayland is not complete yet, for example.
     \item \url{http://wayland.freedesktop.org/}
     \end{itemize}
@@ -1364,7 +1364,9 @@ Contents of \code{usr/lib} after installation of {\em libpng} and {\em
     \url{http://ltib.org/}
   \item {\bf OpenEmbedded}, more flexible but also far more complicated\\
     \url{http://www.openembedded.org}, its industrialized version {\bf
-      Yocto} and vendor-specific derivatives such as {\bf Arago}
+      Yocto Project} and vendor-specific derivatives such as {\bf Arago}.\\
+      See our dedicated course and training materials: 
+      \url{http://free-electrons.com/training/yocto/}.
   \item Vendor specific tools (silicon vendor or embedded Linux
     vendor)
   \end{itemize}
@@ -1494,7 +1496,7 @@ $(eval $(autotools-package))
 \end{frame}
 
 \begin{frame}
-  \frametitle{OpenEmbedded / Yocto}
+  \frametitle{OpenEmbedded / Yocto Project}
   \begin{itemize}
   \item The most versatile and powerful embedded Linux build system
     \begin{itemize}
@@ -1528,10 +1530,6 @@ $(eval $(autotools-package))
           and unnecessarily big for production systems.
     \item Available on ARM, MIPS and PowerPC architectures
     \item Software is compiled natively by default.
-    \item Emdebian is a project to make Debian better for embedded
-      systems: leverage Debian package descriptions, but reduces
-      dependencies, smaller configuration, removes documentation,
-      supports uClibc... See \url{http://emdebian.org}.
     \end{itemize}
     \column{0.2\textwidth}
     \includegraphics[width=\textwidth]{slides/sysdev-embedded-linux/debian.png}\\
@@ -1635,7 +1633,6 @@ $(eval $(autotools-package))
   \begin{itemize}
   \item Rebuild the same system, this time with Buildroot.
   \item See how easier it gets!
-  \item Adding your own DirectFB based application.
   \end{itemize}
 }
 

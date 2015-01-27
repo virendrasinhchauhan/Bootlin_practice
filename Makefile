@@ -1,4 +1,4 @@
-# Required packages (tested on Ubuntu 12.04):
+# Required packages (tested on Ubuntu 14.04):
 # inkscape texlive-latex-base texlive-font-utils dia python-pygments
 
 # Needed tools
@@ -13,7 +13,7 @@ UPPERCASE = $(shell echo $1 | tr "[:lower:]" "[:upper:]")
 # List of slides for the different courses
 
 KERNEL_SLIDES = \
-		licensing \
+		first-slides \
 		about-us \
 		course-information-title \
 		beagleboneblack-board \
@@ -74,10 +74,11 @@ KERNEL_SLIDES = \
 		kernel-git-lab
 
 SYSDEV_SLIDES = \
-		licensing \
+		first-slides \
 		about-us \
 		course-information-title \
-		igepv2-board \
+		xplained-board \
+		sysdev-shopping-list \
 		course-information \
 		sysdev-intro \
 		sysdev-dev-environment \
@@ -122,7 +123,7 @@ SYSDEV_SLIDES = \
 		last-slides
 
 ANDROID_SLIDES = \
-		licensing \
+		first-slides \
 		about-us \
 		course-information-title \
 		beagleboneblack-board \
@@ -218,7 +219,7 @@ ANDROID_SLIDES = \
 		last-slides
 
 BOOTTIME_SLIDES = \
-		licensing \
+		first-slides \
 		thanks-atmel \
 		about-us \
 		course-information-title \
@@ -238,7 +239,39 @@ BOOTTIME_SLIDES = \
 		boottime-kernel \
 		boottime-bootloader \
 		boottime-hardware-init \
-		boottime-alternatives \
+
+
+YOCTO_SLIDES    = \
+		first-slides \
+		about-us \
+		course-information-title \
+		beagleboneblack-board \
+		yocto-course-outline \
+		course-information \
+		setup-lab \
+		yocto-introduction-title \
+		yocto-introduction-distributions \
+		yocto-overview \
+		yocto-basics \
+		yocto-build-lab \
+		yocto-advanced \
+		yocto-advanced-lab \
+		yocto-recipe-basics \
+		yocto-recipe-basics-lab \
+		yocto-recipe-advanced \
+		yocto-layer \
+		yocto-layer-lab \
+		yocto-bsp \
+		yocto-bsp-lab \
+		yocto-layer-distro \
+		yocto-image \
+		yocto-image-lab \
+		yocto-sdk \
+		yocto-sdk-lab \
+		yocto-sdk-eclipse-lab \
+		yocto-licensing \
+		yocto-recipe-extra \
+		yocto-resources \
 		last-slides
 
 
@@ -257,7 +290,6 @@ SYSDEV_LABS   = setup \
 		sysdev-application-development \
 		sysdev-application-debugging \
 		sysdev-real-time \
-#		backup # Currently broken for sysdev course
 
 KERNEL_LABS   = setup \
 		kernel-sources-download \
@@ -275,7 +307,6 @@ KERNEL_LABS   = setup \
 		kernel-debugging \
 		kernel-marvell-armada \
 		kernel-git \
-#		backup # Currently broken for kernel course
 
 ANDROID_LABS  = setup \
 		android-source-code \
@@ -303,6 +334,14 @@ BOOTTIME_LABS = boottime-install \
 YOCTO_LABS    = setup \
 		yocto-first-build \
 		yocto-advanced-configuration \
+		yocto-add-application \
+		yocto-layer \
+		yocto-extend-recipe \
+		yocto-custom-machine \
+		yocto-custom-image \
+		yocto-recipe-extra \
+		yocto-sdk \
+		yocto-sdk-eclipse \
 
 # Output directory
 OUTDIR   = $(PWD)/out
@@ -550,9 +589,12 @@ $(VARS): FORCE
 	@mkdir -p $(dir $@)
 	/bin/echo "\def \sessionurl {$(SESSION_URL)}" > $@
 	/bin/echo "\def \training {$(TRAINING)}" >> $@
+	/bin/echo "\def \trainer {$(TRAINER)}" >> $@
 
 clean:
-	$(RM) -rf $(OUTDIR) *.pdf
+	$(RM) -rf $(OUTDIR) *.pdf *-labs *.xz
+
+all: full-sysdev-slides.pdf full-sysdev-labs.pdf full-kernel-slides.pdf full-kernel-labs.pdf full-android-slides.pdf full-android-labs.pdf full-boottime-slides.pdf full-boottime-labs.pdf kernel-agenda.pdf android-agenda.pdf boottime-agenda.pdf
 
 help:
 	@echo "Available targets:"
@@ -561,13 +603,17 @@ help:
 	@echo " full-kernel-labs.pdf            Complete labs for the 'kernel' course"
 	@echo " full-android-labs.pdf           Complete labs for the 'android' course"
 	@echo " full-boottime-labs.pdf          Complete labs for the 'boottime' course"
+	@echo " full-yocto-labs.pdf             Complete labs for the 'yocto' course"
 	@echo " full-sysdev-slides.pdf          Complete slides for the 'sysdev' course"
 	@echo " full-kernel-slides.pdf          Complete slides for the 'kernel' course"
 	@echo " full-android-slides.pdf         Complete slides for the 'android' course"
 	@echo " full-boottime-slides.pdf        Complete slides for the 'boottime' course"
+	@echo " full-yocto-slides.pdf           Complete slides for the 'yocto' course"
 	@echo " android-agenda.pdf              Agenda for the 'android' course"
+	@echo " autotools-agenda.pdf            Agenda for the 'autotools' course"
 	@echo " boottime-agenda.pdf             Agenda for the 'boottime' course"
 	@echo " buildroot-agenda.pdf            Agenda for the 'buildroot' course"
+	@echo " sysdev-agenda.pdf               Agenda for the 'sysdev' course"
 	@echo " kernel-agenda.pdf               Agenda for the 'kernel' course"
 	@echo " yocto-agenda.pdf                Agenda for the 'yocto' course"
 	@echo

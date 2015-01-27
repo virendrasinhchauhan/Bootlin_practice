@@ -11,7 +11,7 @@ After this lab, you will be able to:
 \section{Download the source code}
 
 Go to the directory holding the Android source code (either
-\code{/opt/android} or \code{$HOME/felabs-android/source}).
+\code{/opt/android} or \code{$HOME/android-labs/source}).
 
 While still using AOSP, we will use the configuration done in
 TI-flavored Android build named \emph{rowboat}. This should make most
@@ -103,7 +103,7 @@ Make sure we are using \code{ccache}:
 
 \begin{verbatim}
 export USE_CCACHE=1
-export CCACHE_DIR=$HOME/felabs-android/ccache
+export CCACHE_DIR=$HOME/android-labs/ccache
 \end{verbatim}
 or, depending on your setup,
 \begin{verbatim}
@@ -263,7 +263,7 @@ kernel, we're going to build the libraries and modules, and store them
 in our device folder.
 
 We're then going to add to the device configuration that the build
-system has to copy those files into the images at compilation time.
+system has to copy these files into the images at compilation time.
 
 The first thing to do is to download the SGX drivers source code from
 rowboat. Modify your local manifest to download them from
@@ -272,7 +272,7 @@ at revision \code{ti_sgx_sdk-ddk_1.10-jb-4.3-fe}, and store it in
 \code{hardware/ti/sgx}.
 
 Once done, open up a new terminal, download it using \code{repo}. Now,
-setup the path to use the Android toolchain.
+set up the path to use the Android toolchain.
 
 \begin{verbatim}
 export PATH=$(pwd)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin:$PATH
@@ -286,7 +286,7 @@ export TARGET_PRODUCT=beagleboneblack
 export ANDROID_ROOT_DIR=<path/to/android/source>
 
 make OMAPES=4.x W=1
-make OMAPES=4.x install 
+make OMAPES=4.x install
 \end{verbatim}
 
 Now, if you look into the folder \code{device/ti/beagleboneblack/sgx},
@@ -306,10 +306,10 @@ After the android logo, the screen will turn black. This is actually
 the backlight turning almost off.
 
 You can find the controls for the backlight in
-\code{/sys/class/backlight}. Play with those controls until you find
+\code{/sys/class/backlight}. Play with these controls until you find
 the values that are working.
 
-To make those changes permanently, you will have to edit the kernel
+To make these changes permanently, you will have to edit the kernel
 code. The used PWM is defined is the \code{am335xevm} board file, in
 the \code{arch/arm/mach-omap2} folder. The PWM work by switching on
 and off at a fast pace the power supply to be able to adjust the

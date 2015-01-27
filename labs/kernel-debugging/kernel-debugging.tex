@@ -26,7 +26,7 @@ debug documentation in the kernel sources, do the following things:
 \item List all available debug messages in the kernel.
 
 \item Enable all debugging messages of your serial module, and check
-  that you indeed see those messages.
+  that you indeed see these messages.
 
 \item Enable just one single debug message in your serial module, and
   check that you see just this message and not the other debug
@@ -61,7 +61,7 @@ that have been transmitted by your driver.
 
 \subsection{Setup}
 
-Go to the \code{~/felabs-kernel/modules/nfsroot/root/debugging/} directory.
+Go to the \code{~/linux-kernel-labs/modules/nfsroot/root/debugging/} directory.
 
 Make sure your kernel is built with the following options:
 
@@ -101,7 +101,7 @@ If the function source code is not enough, then you can look at the
 disassembled version of the function, either using:
 
 \begin{verbatim}
-cd ~/felabs-kernel/src/linux/
+cd ~/linux-kernel-labs/src/linux/
 arm-linux-gnueabi-objdump -S vmlinux > vmlinux.disasm
 \end{verbatim}
 

@@ -34,6 +34,8 @@
     \begin{itemize}
     \item Sourcery CodeBench toolchains
     \item Linaro toolchains
+    \item Toolchains packaged by your distribution\\
+	  Ubuntu example: \code{sudo apt-get install gcc-arm-linux-gnueabi}
     \item More references at \url{http://elinux.org/Toolchains}
     \end{itemize}
   \end{itemize}
@@ -42,7 +44,7 @@
 \begin{frame}
   \frametitle{Sourcery CodeBench}
   \begin{itemize}
-  \item {\em CodeSourcery} was a a company with an extended expertise
+  \item {\em CodeSourcery} was a company with an extended expertise
     on free software toolchains: gcc, gdb, binutils and glibc. It has
     been bought by {\em Mentor Graphics}, which continues to provide
     similar services and products
@@ -73,11 +75,9 @@
       releases modified sources of stable releases of gcc, with these
       optimizations for ARM (mainly for recent Cortex A CPUs).
     \item As any gcc release, these sources can be used by build tools
-      to build their own binary toolchains (Buildroot, OpenEmbedded...)
+      to build their own binary toolchains (Buildroot, OpenEmbedded...).
       This allows to support glibc, uClibc and eglibc.
     \item \small\url{https://wiki.linaro.org/WorkingGroups/ToolChain}\normalsize
-    \item Binary packages are available for Ubuntu users,
-      \url{https://launchpad.net/~linaro-maintainers/+archive/toolchain}
     \end{itemize}
     \column{0.1\textwidth}
     \includegraphics[width=\textwidth]{slides/sysdev-toolchains-obtaining/linaro.png}
@@ -139,8 +139,8 @@ a cross-compiling toolchain
 \begin{itemize}
 \item {\bf Buildroot}
   \begin{itemize}
-  \item Makefile-based, has a Crosstool-NG back-end, maintained by the
-    community
+  \item Makefile-based. Can build (e)glibc, uClibc and musl based
+    toolchains, for a wide range of architectures.
   \item \url{http://www.buildroot.net}
   \end{itemize}
 \item {\bf PTXdist}

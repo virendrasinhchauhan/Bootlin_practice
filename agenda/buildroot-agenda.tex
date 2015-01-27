@@ -9,6 +9,8 @@
 \hypersetup{pdftitle={Buildroot training},
   pdfauthor={Free Electrons}}
 
+\renewcommand{\arraystretch}{2.0}
+
 \begin{document}
 
 \thispagestyle{fancy}
@@ -30,7 +32,7 @@ Buildroot training\\
 \arrayrulecolor{lightgray} {
   \setlist[1]{itemsep=-5pt}
   \begin{tabularx}{\textwidth}{|g|h|}
-    {\bf Title} & Buildroot training \\
+    {\bf Title} & {\bf Buildroot training} \\
     \hline
 
     {\bf Overview} &
@@ -40,7 +42,8 @@ Buildroot training\\
     Integrating new packages in Buildroot \par
     Advanced package recipe tricks \par
     Board and project support \par
-    Application development with Buildroot \\
+    Application development with Buildroot \par
+    Understanding the Buildroot internals \\
     \hline
 
     {\bf Duration} & {\bf Three} days - 24 hours (8 hours per day).
@@ -48,29 +51,29 @@ Buildroot training\\
     \hline
 
     {\bf Trainer} & {\bf Thomas Petazzoni}. Thomas is a major
-    Buildroot developer 2009, with more than 1600 patches integrated
-    and an active
-    participation to the development process.\\
+    Buildroot developer since 2009, with more than 2400 patches
+    integrated and an active participation to the development process.\\
     \hline
 
     {\bf Language} & Oral lectures: English, French.
     \newline Materials: English.\\
     \hline
 
-    {\bf Audience} & Companies interested in using Buildroot to build
-    their
-    embedded Linux system.\\
+    {\bf Audience} & Companies already using or interested in using
+    Buildroot to build their embedded Linux system.\\
     \hline
 
     {\bf Prerequisites} & {\bf Knowledge of embedded Linux} as covered
-    in our embedded Linux training
-    (\url{http://free-electrons.com/training/embedded-linux/}) \newline 
-    {\bf Knowledge and practice of Unix or GNU/Linux commands}
+    in our embedded Linux course:
+    \newline \url{http://free-electrons.com/training/embedded-linux/} \vspace{1em}
+    \newline {\bf Knowledge and practice of Unix or GNU/Linux commands}
     \newline People lacking experience on this topic should get
-    trained by themselves with our freely available on-line slides
-    (\url{http://free-electrons.com/docs/command-line/}) \\
+    trained by themselves with our freely available on-line slides:
+    \newline \url{http://free-electrons.com/docs/command-line/} \\
     \hline
+  \end{tabularx}
 
+  \begin{tabularx}{\textwidth}{|g|h|}
     {\bf Required equipment} &
     {\bf For on-site sessions only.}
     \newline Everything is supplied by Free Electrons in public
@@ -81,7 +84,7 @@ Buildroot training\\
     installed in a {\bf free partition of at least 20 GB. Using Linux
       in a virtual machine is not supported}, because of issues
     connecting to real hardware.
-    \item We need Ubuntu Desktop 12.04 (32 or 64 bit, Xubuntu and
+    \item We need Ubuntu Desktop 14.04 (32 or 64 bit, Xubuntu and
     Kubuntu variants are fine). We don't support other
     distributions, because we can't test all possible package versions.
     \item {\bf Connection to the Internet} (direct or through the
@@ -89,7 +92,7 @@ Buildroot training\\
     \item {\bf PC computers with valuable data must be backed up}
     before being used in our sessions.  Some people have already made
     mistakes during our sessions and damaged work data.
-    \end{itemize} \\
+    \end{itemize}\\
     \hline
 
     {\bf Materials} & Print and electronic copies of presentations and
@@ -98,6 +101,7 @@ Buildroot training\\
     \hline
 
 \end{tabularx}}
+\normalsize
 
 \feagendatwocolumn
 {Hardware}
@@ -120,7 +124,7 @@ Buildroot training\\
 {}
 {
   \begin{center}
-    \includegraphics[height=5cm]{agenda/beagleboneblack.png}
+    \includegraphics[height=5cm]{../slides/beagleboneblack-board/beagleboneblack.png}
   \end{center}
 }
 
@@ -132,7 +136,8 @@ Buildroot training\\
   \begin{itemize}
   \item The general architecture of an embedded Linux system
   \item Build systems vs. binary distributions
-  \item Comparaison of existing build systems
+  \item Role of a build system
+  \item Comparison of existing build systems
   \end{itemize}
 }
 {Lecture - Introduction to Buildroot}
@@ -148,8 +153,8 @@ Buildroot training\\
 {
   \begin{itemize}
   \item Getting and setting up Buildroot
-  \item Configuring a basic system with Buildroot
-  \item Running the system on a hardware platform and in the Qemu
+  \item Configuring and building a basic system with Buildroot
+  \item Running the system on a hardware platform and in the QEMU
     emulator, with the root filesystem over NFS or the root filesystem
     flashed
   \end{itemize}
@@ -169,11 +174,12 @@ Buildroot training\\
 {
   \begin{itemize}
   \item The different choices for using toolchains in Buildroot
+  \item Overview of the toolchain options
   \item Using existing binary toolchains, such as Sourcery CodeBench
     toolchains, understanding {\em multilib} capabilities and
     integration of toolchains in Buildroot
-  \item Generating custom toolchains with Buildroot and {\em Crosstool-ng}
-  \item Details on using and configuring {\em Crosstool-ng}
+  \item Generating custom toolchains with {\em Crosstool-NG}, and
+    re-use them as external toolchains
   \end{itemize}
 }
 {Lab - Toolchains in Buildroot}
@@ -187,18 +193,17 @@ Buildroot training\\
   \end{itemize}
 }
 
-\section{Day 2 - Morning}
-
 \feagendatwocolumn
 {Lecture - Root filesystem construction in Buildroot}
 {
   \begin{itemize}
   \item Understand how Buildroot builds the root filesystem: {\em
-      skeleton} and installation of packages
+      skeleton}, installation of packages, overlays, {\em post-build}
+    and {\em post-image} scripts.
   \item Customization of the root filesystem contents
-  \item Understand the configuration of the {\em console}
-  \item Study the different options for managing the {\tt /dev}
-    directory: static or dynamic, with mdev or udev
+  \item System configuration: {\em console} selection, various {\tt
+      /dev} management methods, the different {\tt init}
+    implementations, etc.
   \item Understand how Buildroot generates filesystem images
   \end{itemize}
 }
@@ -206,29 +211,30 @@ Buildroot training\\
 {
   \begin{itemize}
   \item Generate Buildroot systems with different {\tt /dev}
-    management options and test them on an hardware platform.
-  \item Customize the root filesystem contents
+    management options and test them on a hardware platform.
+  \item Customize the root filesystem contents using a {\em rootfs
+      overlay} and {\em post-build} scripts.
   \end{itemize}
 }
-\\
-\feagendaonecolumn
+
+\section{Day 2 - Morning}
+
+\feagendatwocolumn
 {Lecture - Integrating new packages in Buildroot}
 {
   \begin{itemize}
   \item How to integrate new packages in the Buildroot configuration
     system
-  \item Understand the different package infrastructures (for {\em
+  \item Understand the different package infrastructures: for {\em
       generic} packages, {\em autotools} packages, {\em CMake}
-    packages and {\em Python} packages)
+    packages and {\em Python} packages.
+  \item Writing a package \code{Config.in} file: how to express
+    dependencies on other packages, on toolchain options, etc.
   \item Details on writing a package recipe: describing the package
     source code location, download method, configuration, build and
     installation steps, handling dependencies, etc.
   \end{itemize}
 }
-
-\section{Day 2 - Afternoon}
-
-\feagendatwocolumn
 {Lab - New packages in Buildroot}
 {
   \begin{itemize}
@@ -236,6 +242,10 @@ Buildroot training\\
     using the different package infrastructures.
   \end{itemize}
 }
+
+\section{Day 2 - Afternoon}
+
+\feagendatwocolumn
 {Lecture - Advanced package recipe tricks}
 {
   \begin{itemize}
@@ -246,13 +256,29 @@ Buildroot training\\
     applications and libraries ({\em source override} mechanism)
   \end{itemize}
 }
-\\
-\feagendaonecolumn
 {Lab - Advanced package recipe tricks}
 {
   \begin{itemize}
   \item Use {\em hooks} in packages
   \item Use special features for custom software
+  \end{itemize}
+}
+
+\feagendaonecolumn
+{Lecture - Analyzing the build: licensing, dependencies, build time}
+{
+  \begin{itemize}
+  \item Usage of the legal information infrastructure
+  \item Graphing dependencies of packages
+  \item Collecting and graphing build time information
+  \end{itemize}
+}
+{Lab - Use licensing, dependency and build time graphing features}
+{
+  \begin{itemize}
+  \item Use \code{legal-info} for legal information extraction
+  \item Use \code{graph-depends} for dependency graphing
+  \item Use \code{graph-build} for build time graphing
   \end{itemize}
 }
 
@@ -269,6 +295,8 @@ Buildroot training\\
   \item Handling root filesystem customization (post-build script,
     skeleton, etc.)
   \item How to version control project-specific changes
+  \item Usage of the \code{BR2_EXTERNAL} feature to store those
+    customizations
   \end{itemize}
 }
 {Lab - Board and project support}
@@ -283,9 +311,7 @@ Buildroot training\\
   \end{itemize}
 }
 
-\section{Day 3 - Afternoon}
-
-\feagendatwocolumn
+\feagendaonecolumn
 {Lecture - Application development with Buildroot}
 {
   \begin{itemize}
@@ -296,6 +322,10 @@ Buildroot training\\
   \item Remote debugging with Buildroot
   \end{itemize}
 }
+
+\section{Day 3 - Afternoon}
+
+\feagendaonecolumn
 {Lab - Application development with Buildroot}
 {
   \begin{itemize}
@@ -319,7 +349,7 @@ Buildroot training\\
 {Lecture - Getting support and contributing}
 {
   \begin{itemize}
-  \item Getting support: {\em bugzilla}, {\em mailing list}, {\em IRC}
+  \item Getting support: {\em Bugzilla}, {\em mailing list}, {\em IRC}
   \item Contributing: understanding the development process, how to
     submit patches
   \end{itemize}

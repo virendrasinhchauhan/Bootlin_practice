@@ -69,7 +69,7 @@
   \item Dedicating a CPU core to a real-time OS or to a real-time
         application, using some kind of hypervizor.
   \item Running real-time work on an FPGA
-  \item Running real-time work on a dedicated microcontroller. 
+  \item Running real-time work on a dedicated microcontroller.
         For example, the TI AM335x CPU (used in the Beaglebone Black)
         has a "Programmable Real-Time Unit and Industrial
         Communication Subsystem (PRU-ICSS)", which can be used for
@@ -431,17 +431,16 @@
 
 \begin{frame}
   \frametitle{The future of the PREEMPT\_RT patchset}
-  Conclusion of the Realtime Linux minisummit (Nov. 2013):
   \begin{itemize}
-  \item {\em The PREEMPT\_RT project will be done in 2014, "one way or another".
-        The first way would be to get most of the rest of the code upstream, but
-        that will require more of an effort, from a wider group than is
-        currently involved. The alternative is to decide that the 95\% of the
-        realtime work already upstream is good enough and to drop further
-        efforts.} 
-  \item Main issue: lack of companies devoting enough engineering
-        resources to complete the job. 
-  \item See \url{http://lwn.net/Articles/572740/}
+  \item July 2014 status: the project is stalled because of lack
+	of funding. Thomas Gleixner is still the maintainer but
+	lacks time for further development and mainlining efforts.
+	He must work on other topics that pay the bills!
+  \item December 2014: the latest release is 3.14.10-rt7 (while
+	mainline is 3.18).
+  \item Contact (and contract) Thomas if you need further
+	features and support for newer kernels.
+  \item See \url{http://lwn.net/Articles/604695/}
   \end{itemize}
 \end{frame}
 
@@ -995,11 +994,9 @@ echo 0 > /sys/kernel/debug/tracing/tracing_enabled
   \item Its Open Patent License drew many developers away and
     frightened users.  Community projects like RTAI and Xenomai now
     attract most developers and users.
-  \item February, 2007: RTLinux rights sold to Wind River. Now
-    supported by Wind River as “Real-Time Core for Wind River Linux.”
-  \item Free version still advertised by Wind River on
-    \url{http://www.rtlinuxfree.com}, but no longer a community
-    project.
+  \item February, 2007: RTLinux rights sold to Wind River. Today,
+    no longer advertised by Wind River.
+  \item Project completely dead.
   \end{itemize}
 \end{frame}
 
@@ -1147,7 +1144,7 @@ echo 0 > /sys/kernel/debug/tracing/tracing_enabled
     \item Serial port controllers;
     \item RTnet UDP/IP stack;
     \item RT socket CAN, drivers for CAN controllers;
-    \item Analogy, fork of the Comedy project, drivers for acquisition cards.
+    \item Analogy, fork of the Comedi project, drivers for acquisition cards.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -1363,14 +1360,14 @@ ARCH-gcc $CFL -o rttest rttest.c $LDF
   \frametitle{Xenomai worst-case latencies results}
   \begin{itemize}
   \item ARM OMAP5432 1.1 GHz: 24 us
-  \item ARM OMAP4430 1 GHz: 29 us
-  \item ARM OMAP3530 720 MHz: 41 us
-  \item ARM AT91SAM9263 180 MHz: 108 us
+  \item ARM OMAP4430 1 GHz: 23 us
+  \item ARM OMAP3530 720 MHz: 44 us
+  \item ARM SAMA5D3 528 MHz: 51 us
   \item ARM AT91RM9200 180 MHz: 181 us
-  \item x86 Atom 1.6 GHz: 31 us
-  \item Geode LX800 processor at 500 MHz: 49 us
+  \item x86 Atom 1.6 GHz: 35 us
+  \item Geode LX800 processor at 500 MHz: 55 us
   \end{itemize}
-  See results at \url{http://xenomai.org/~gch/core-3.10-latencies/}
+  See results at \url{http://xenomai.org/~gch/core-3.14-latencies/}
 \end{frame}
 
 \begin{frame}
@@ -1395,15 +1392,14 @@ ARCH-gcc $CFL -o rttest rttest.c $LDF
 \begin{frame}
   \frametitle{Organizations}
   \begin{itemize}
-  \item \url{http://www.realtimelinuxfoundation.org/}\\
-    Community portal for real-time Linux.\\
-    Organizes a yearly workshop.
   \item \url{http://www.osadl.org}\\
     Open Source Automation Development Lab (OSADL)\\
     Targets machine and plant control systems. Most member companies
     are German (Thomas Gleixner is on board). Supports the use of
     PREEMPT\_RT and Xenomai and contributes to these projects. Shares
     useful documentation and resources.
+
+    They also organize a yearly Real Time Linux Workshop.
   \end{itemize}
 \end{frame}
 

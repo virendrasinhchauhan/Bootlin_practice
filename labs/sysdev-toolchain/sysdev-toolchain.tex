@@ -11,7 +11,7 @@ After this lab, you will be able to:
 
 \section{Setup}
 
-Go to the \code{$HOME/felabs-sysdev/toolchain} directory.
+Go to the \code{$HOME/embedded-linux-labs/toolchain} directory.
 
 \section{Install needed packages}
 
@@ -19,15 +19,28 @@ Install the packages needed for this lab:
 
 \begin{verbatim}
 sudo apt-get install autoconf automake libtool libexpat1-dev \
-     libncurses5-dev bison flex patch curl cvs texinfo \
-     build-essential subversion gawk python-dev gperf
+     libncurses5-dev bison flex patch curl cvs texinfo git bc \
+     build-essential subversion gawk python-dev gperf unzip \
+     pkg-config wget
 \end{verbatim}
+
+{\em Tip: instead of typing all the above package names, fetch the
+electronic version of these instructions and copy/paste the 
+long command line!}
 
 \section{Getting Crosstool-ng}
 
-Get the latest 1.19.x release of Crosstool-ng at
-\url{http://crosstool-ng.org}. Expand the archive right in the current
-directory, and enter the Crosstool-ng source directory.
+Let's download the 1.20.0 release of Crosstool-ng, through its git
+source repository: 
+
+\begin{verbatim}
+git clone git://crosstool-ng.org/crosstool-ng
+cd crosstool-ng/
+git checkout crosstool-ng-1.20.0 
+\end{verbatim}
+
+Note that if {\em cloning} through \code{git://} doesn't work due to
+network restrictions, you can clone through \code{http://} instead.
 
 \section{Installing Crosstool-ng}
 
@@ -37,6 +50,7 @@ solution. As documented in
 \code{docs/2\ -\ Installing\ crosstool-NG.txt}, do:
 
 \begin{verbatim}
+autoreconf
 ./configure --enable-local
 make
 make install
@@ -58,10 +72,11 @@ Crosstool-ng comes with a set of ready-made configuration files for
 various typical setups: Crosstool-ng calls them {\em samples}. They can be
 listed by using \code{./ct-ng list-samples}.
 
-We will use the arm-unknown-linux-uclibcgnueabi sample. It can be loaded by issuing:
+We will use the \code{arm-cortexa5-linux-uclibcgnueabihf} sample. It
+can be loaded by issuing:
 
 \begin{verbatim}
-./ct-ng arm-unknown-linux-uclibcgnueabi
+./ct-ng arm-cortexa5-linux-uclibcgnueabihf
 \end{verbatim}
 
 Then, to refine the configuration, let's run the \code{menuconfig} interface:
@@ -84,21 +99,18 @@ In \code{Toolchain options}:
 \begin{itemize}
 \item Set \code{Tuple's alias} to \code{arm-linux}. This way, we will
   be able to use the compiler as \code{arm-linux-gcc} instead of
-  \code{arm-unknown-linux-uclibcgnueabi-gcc}, which is much longer to
+  \code{arm-cortexa5-linux-uclibcgnueabihf-gcc}, which is much longer to
   type.
 \end{itemize}
 
 In \code{Debug facilities}:
 \begin{itemize}
-\item Make sure that \code{gdb}, \code{strace} and \code{ltrace} are
-      enabled.
-\item Remove the other options (\code{dmalloc} and \code{duma}).
-\item In \code{gdb} options:
-  \begin{itemize}
-  \item Make sure that the \code{Cross-gdb} and \code{Build a static gdbserver}
-	options are enabled; the other options are not needed.
-  \item Set \code{gdb version} to \code{7.4.1}.
-  \end{itemize}
+\item Make sure that \code{gdb} is enabled.
+\item Remove the other options (\code{dmalloc}, \code{duma},
+      \code{strace} and \code{ltrace}).
+\item In \code{gdb} options, make sure that the \code{Cross-gdb} and
+      \code{Build a static gdbserver} options are enabled; the other
+      options are not needed.
 \end{itemize}
 
 Explore the different other available options by traveling through the
@@ -153,12 +165,12 @@ error: 'f_info' was not declared in this scope
 
 One solution is to add the \code{-fpermissive} flag to the
 \code{CT_EXTRA_FLAGS_FOR_HOST} setting (in \code{Path and misc options
-->  Extra host compiler flags}). 
+->  Extra host compiler flags}).
 
 \section{Testing the toolchain}
 
 You can now test your toolchain by adding
-\code{/usr/local/xtools/arm-unknown-linux-uclibcgnueabi/bin/} to your
+\code{/usr/local/xtools/arm-cortexa5-linux-uclibcgnueabihf/bin/} to your
 \code{PATH} environment variable and compiling the simple
 \code{hello.c} program in your main lab directory with
 \code{arm-linux-gcc}.
@@ -168,7 +180,7 @@ correctly been compiled for the ARM architecture.
 
 \section{Cleaning up}
 
-To save about 3 GB of storage space, do a \code{./ct-ng clean} in the
+To save about 6 GB of storage space, do a \code{./ct-ng clean} in the
 Crosstool-NG source directory. This will remove the source code of the
 different toolchain components, as well as all the generated files
 that are now useless since the toolchain has been installed in

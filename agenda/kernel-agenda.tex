@@ -9,6 +9,8 @@
 \hypersetup{pdftitle={Embedded Linux kernel and driver development training},
   pdfauthor={Free Electrons}}
 
+\renewcommand{\arraystretch}{2.0}
+
 \begin{document}
 
 \thispagestyle{fancy}
@@ -30,7 +32,7 @@ Embedded Linux kernel and driver development training\\
 \arrayrulecolor{lightgray} {
   \setlist[1]{itemsep=-5pt}
   \begin{tabularx}{\textwidth}{|g|h|}
-    {\bf Title} & Embedded Linux kernel and driver development training \\
+    {\bf Title} & {\bf Embedded Linux kernel and driver development training} \\
     \hline
 
     {\bf Overview} &
@@ -39,11 +41,11 @@ Embedded Linux kernel and driver development training\\
     Linux kernel debugging \par
     Porting the Linux kernel to a new board \par
     Working with the kernel development community \par
-    Practical labs with the ARM-based Beagle Bone Black board.
-    \newline\newline See our training materials on
-    \url{http://free-electrons.com/doc/training/linux-kernel}.
-    This way, you can check by yourself whether the course contents
-    correspond to your needs. \\
+    Practical labs with the ARM-based Beagle Bone Black board. \\
+    \hline
+    {\bf Materials} &
+    Check that the course contents correspond to your needs:
+    \newline \url{http://free-electrons.com/doc/training/linux-kernel}. \\
     \hline
 
     {\bf Duration} & {\bf Five} days - 40 hours (8 hours per day).
@@ -67,12 +69,12 @@ Embedded Linux kernel and driver development training\\
     {\bf Solid experience in C programming}
     \newline In particular, participants must be familiar
     with creating and dealing with complex data types and structures,
-    with pointers to such symbols, as well as with function pointers.
-    \newline\newline {\bf Knowledge and practice of UNIX or GNU/Linux commands}
+    with pointers to such symbols, as well as with function pointers. \vspace{1em}
+    \newline {\bf Knowledge and practice of UNIX or GNU/Linux commands}
     \newline People lacking experience on this topic should get
     trained by themselves with our freely available on-line slides
-    (\url{http://free-electrons.com/docs/command-line/}).
-    \newline\newline {\bf Experience in embedded Linux development}.
+    (\url{http://free-electrons.com/docs/command-line/}).\vspace{1em}
+    \newline {\bf Experience in embedded Linux development}.
     \newline Taking our Embedded Linux course
     (\url{http://free-electrons.com/training/embedded-linux/})
     first is not an absolute prerequisite, but it will definitely
@@ -94,7 +96,7 @@ Embedded Linux kernel and driver development training\\
     installed in a {\bf free partition of at least 20 GB. Using Linux
       in a virtual machine is not supported}, because of issues
     connecting to real hardware.
-    \item We need Ubuntu Desktop 12.04 (32 or 64 bit, Xubuntu and
+    \item We need Ubuntu Desktop 14.04 (32 or 64 bit, Xubuntu and
     Kubuntu variants are fine). We don't support other
     distributions, because we can't test all possible package versions.
     \item {\bf Connection to the Internet} (direct or through the
@@ -134,7 +136,7 @@ Embedded Linux kernel and driver development training\\
 {}
 {
   \begin{center}
-    \includegraphics[height=5cm]{agenda/beagleboneblack.png}
+    \includegraphics[height=5cm]{../slides/beagleboneblack-board/beagleboneblack.png}
   \end{center}
 }
 
@@ -154,7 +156,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 
   While our explanations will be focused on specifically the Linux
-  subsystems needed to implement those drivers, they will always be
+  subsystems needed to implement these drivers, they will always be
   generic enough to convey the general design philosophy of the Linux
   kernel. The information learnt will therefore apply beyond just
   I2C, input or memory-mapped devices.
@@ -238,7 +240,7 @@ Embedded Linux kernel and driver development training\\
   \begin{itemize}
   \item Write a kernel module with several capabilities.
   \item Access kernel internals from your module.
-  \item Setup the environment to compile it
+  \item Set up the environment to compile it
   \end{itemize}
 }
 

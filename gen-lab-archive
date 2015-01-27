@@ -1,14 +1,14 @@
 #!/bin/sh
 
 # Produces the lab archive that is published on
-# http://free-electrons.com/labs/labs.tar.xz
+# http://free-electrons.com/labs/<session>-labs.tar.xz
 
 ECHO=/bin/echo
 GIT=/usr/bin/git
 RM=/bin/rm
 FIND=/usr/bin/find
 TAR=/bin/tar
-UNLZMA=/usr/bin/unxz
+UNXZ=/usr/bin/unxz
 DIRNAME=/usr/bin/dirname
 RSYNC=/usr/bin/rsync
 SUDO=/usr/bin/sudo
@@ -30,7 +30,7 @@ if ! ls lab-data | grep -q $1; then
     exit 1
 fi
 
-FELABS=felabs-$1
+FELABS=$1-labs
 
 # Updating repo
 

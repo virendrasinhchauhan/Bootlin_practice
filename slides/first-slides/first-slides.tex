@@ -1,0 +1,74 @@
+\ifdefempty{\trainer}{}{
+  \input{../slides/first-slides/\trainer.tex}
+}
+
+\begin{frame}
+\frametitle{Rights to copy}
+   \scriptsize
+   © Copyright 2004-\the\year, Free Electrons \\
+   {\bf License: Creative Commons Attribution - Share Alike 3.0} \\
+   \url{http://creativecommons.org/licenses/by-sa/3.0/legalcode} \\
+
+   You are free:
+   \begin{itemize}
+     \item to copy, distribute, display, and perform the work
+     \item to make derivative works
+     \item to make commercial use of the work
+   \end{itemize}
+
+   Under the following conditions:
+   \begin{itemize}
+     \item {\bf Attribution}. You must give the original author credit.
+     \item {\bf Share Alike}. If you alter, transform, or build upon
+           this work, you may distribute the resulting work only under
+           a license identical to this one.
+     \item For any reuse or distribution, you must make clear to others
+           the license terms of this work.
+     \item Any of these conditions can be waived if you get permission
+           from the copyright holder.
+    \end{itemize}
+
+    Your fair use and other rights are in no way affected by the above.
+    \normalsize
+\end{frame}
+
+%% If the materials a generated for a real session, not for the website
+
+\ifdefempty{\trainer}{}{
+  \begin{frame}
+  \frametitle{Electronic copies of these documents}
+     \begin{itemize}
+        \item Electronic copies of your particular version of the
+              materials are available on:\\
+              {\scriptsize \url{\sessionurl}} \\
+        \item Open the corresponding documents and use them throughout
+              the course to look for explanations given earlier by the
+              instructor.
+        \item You will need these electronic versions because
+	      we neither print any index nor any table of contents
+	      (quite high environmental cost for little added value)
+        \item For future reference, see the first slide to see where
+              document updates will be available.
+    \end{itemize}
+  \end{frame}
+}
+
+\begin{frame}
+\frametitle{Hyperlinks in the document}
+  There are many hyperlinks in the document
+  \begin{itemize}
+    \item Regular hyperlinks:\\
+          \url{http://kernel.org/}
+    \item Kernel documentation links:\\
+	  \kerneldoc{kmemcheck.txt}
+    \item Links to kernel source files and directories:\\
+	  \kpath{drivers/input} \\
+	  \kpath{include/linux/fb.h}
+    \item Links to the declarations, definitions and instances
+          of kernel symbols (functions, types, data, structures): \\
+	  \kfunc{platform_get_irq} \\
+	  \ksym{GFP_KERNEL} \\
+	  \kstruct{file_operations}
+  \end{itemize}
+\end{frame}
+

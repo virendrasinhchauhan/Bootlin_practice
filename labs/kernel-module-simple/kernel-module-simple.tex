@@ -6,13 +6,13 @@ After this lab, you will be able to:
 \item Compile and test standalone kernel modules, which code is outside of the main Linux sources.
 \item Write a kernel module with several capabilities, including module parameters.
 \item Access kernel internals from your module.
-\item Setup the environment to compile it.
+\item Set up the environment to compile it.
 \item Create a kernel patch.
 \end{itemize}
 
 \section{Setup}
 
-Go to the \code{~/felabs-kernel/modules/nfsroot/root/hello} directory.
+Go to the \code{~/linux-kernel-labs/modules/nfsroot/root/hello} directory.
 Boot your board if needed.
 
 \section{Writing a module}
@@ -87,31 +87,14 @@ Run the \code{scripts/checkpatch.pl -h} command in the kernel sources,
 to find which options are available.  Now, run:
 
 \begin{verbatim}
-~/felabs-kernel/src/linux/scripts/checkpatch.pl --file --no-tree hello_version.c
+~/linux-kernel-labs/src/linux/scripts/checkpatch.pl --file --no-tree hello_version.c
 \end{verbatim}
 
-See how many violations are reported on your code. If there are
-indenting errors, you can first run your code through the \code{indent}
-command:
-
-\begin{verbatim}
-sudo apt-get install indent
-indent -linux hello_version.c
-\end{verbatim}
-
-Caution: don't run \code{indent} when you modify source files created
-by other people. Otherwise, people won't be able to distinguish your own
-changes from the ones made by \code{indent}.
-
-You can now compare the indented file with the original:
-
-\begin{verbatim}
-sudo apt-get install meld
-meld hello_version.c~ hello_version.c
-\end{verbatim}
-
-Now, get back to \code{checkpatch.pl} and fix your code until there are
-no errors left.
+See how many violations are reported on your code, and fix your code
+until there are no errors left. If there are many indentation related
+errors, make sure you use a properly configured source code editor,
+according to the kernel coding style rules in
+\code{Documentation/CodingStyle}.
 
 \section{Adding the hello\_version module to the kernel sources}
 
@@ -132,13 +115,13 @@ Run one of the kernel configuration interfaces and check that it
 shows your new driver lets you configure it as a module.
 
 Run the \code{make} command and make sure that the code of your new
-driver is getting compiled. 
+driver is getting compiled.
 
 Then, commit your changes in the current branch (try to choose an
 appropriate commit message):
 
 \begin{verbatim}
-cd ~/felabs-kernel/src/linux
+cd ~/linux-kernel-labs/src/linux
 git add -A
 git commit -as
 \end{verbatim}
@@ -148,7 +131,7 @@ git commit -as
       (except for files explicitly ignored, such as generated ones).
       Another, perhaps safer way to do this without taking the risk
       to add unwanted files, is to run \code{git status} and explicitly
-      run \code{git add} on each of the files that you want to 
+      run \code{git add} on each of the files that you want to
       add to the next commit.
 \item \code{git commit -a} creates a commit with all modified files
       (at least the ones tracked by the repository) since the previous
@@ -175,7 +158,7 @@ git format-patch 3.13.y
 Have a look at the generated file. You can see that its name reused
 the commit message.
 
-If you want to change the last commit message at this stage, you 
+If you want to change the last commit message at this stage, you
 can run:
 
 \begin{verbatim}

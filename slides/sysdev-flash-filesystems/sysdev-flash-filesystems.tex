@@ -292,7 +292,7 @@ Creating 5 MTD partitions on "omap2-nand.0":
   \item The Linux kernel cannot autodetect the type of a root filesystem
     in MTD flash. That's why the \code{rootfstype} kernel parameter is
     needed.
-  \item For root partitions on a block device, using \code{rootfstype} 
+  \item For root partitions on a block device, using \code{rootfstype}
     (for example: \code{rootfstype=ext3}) can reduce boot time a little
     bit. This way, the kernel doesn't have to try all the block
     filesystems it supports.
@@ -342,7 +342,7 @@ Creating 5 MTD partitions on "omap2-nand.0":
   \item Takes care of managing the erase blocks and wear
     leveling. Makes filesystems easier to implement.
   \item Wear leveling can operate on the whole storage,
-    not only on individual partitions (strong advantage). 
+    not only on individual partitions (strong advantage).
   \item Volumes can be dynamically resized or, on the opposite, can be
     read-only (static).
   \end{itemize}
@@ -445,6 +445,7 @@ Creating 5 MTD partitions on "omap2-nand.0":
   containing several volumes, can be created using \code{ubinize}:
   \begin{itemize}
   \item Can be written to a raw MTD partition in U-boot.
+  \item Must be written using \code{nand write.trimffs}.
   \item Caution: \code{nand erase} will also erase the Erase Counters
   \end{itemize}
   First, create a configuration file describing the UBI volumes (\code{ubi.ini}):
@@ -469,10 +470,13 @@ vol_alignment=1
   \begin{itemize}
     \item Creates \code{ubi.img}, with 256KiB physical erase blocks,
       4096 minimum I/O size (\code{-m}).
-    \end{itemize}
+  \end{itemize}
   \item See
     \url{http://free-electrons.com/blog/creating-flashing-ubi-ubifs-images/}
     for details about creating UBI and UBIFS images.
+  \item See
+    \url{http://www.linux-mtd.infradead.org/doc/ubi.html\#L_flasher_algo}
+    for what is required when flashing UBI images containing UBIFS volumes.
   \item Build systems like Buildroot can run \code{ubinize} automatically!
   \end{itemize}
 \end{frame}
@@ -521,7 +525,7 @@ vol_alignment=1
     and use the Linux filesystems doing wear leveling.
   \item No details about the layer (Flash Translation Layer) they
     use. Details are kept as trade secrets, and may hide poor
-    implementations. 
+    implementations.
   \item Can use {\em flashbench}
         (\url{https://github.com/bradfa/flashbench}) to find out
         the erase block size and optimize filesystem formating.

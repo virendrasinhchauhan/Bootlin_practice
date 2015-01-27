@@ -36,7 +36,7 @@
     as {\em device files} in \code{/dev}.
   \end{itemize}
   $\rightarrow$ Most devices are {\em character devices}, so we will
-  study those in more details.
+  study these in more details.
 \end{frame}
 
 \begin{frame}
@@ -188,7 +188,7 @@ struct file_operations {
         opening mode, etc.
       \item Has a \code{void *private_data} pointer that one can
         freely use.
-      \item A pointer to the file structure is passed to all other
+      \item A pointer to the \ksym{file} structure is passed to all other
         operations
       \end{itemize}
     \end{itemize}
@@ -295,8 +295,8 @@ struct file_operations {
     \begin{itemize}
     \item \code{mmap()} system call to allow user space to directly
       access memory mapped I/O space. See our \code{mmap()} chapter.
-    \item \kfunc{get_user_pages} to get a mapping to user pages
-      without having to copy them. See \url{http://j.mp/oPW6Fb}
+    \item \kfunc{get_user_pages_fast} to get a mapping to user pages
+      without having to copy them. See \url{http://j.mp/1sML7lP}
       (Kernel API doc). This API is more complex to use though.
     \end{itemize}
   \end{itemize}
@@ -431,8 +431,7 @@ int main(void)
     implement and helper functions for the drivers
     \begin{itemize}
     \item \kstruct{fb_ops}
-    \item Second part of \kpath{include/linux/fb.h} (in
-      \code{ifdef __KERNEL__})
+    \item Second part of \kpath{include/linux/fb.h}
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -533,7 +532,7 @@ static int xxxfb_probe (struct pci_dev *dev,
   \item Each \emph{framework} defines a structure that a device driver
     must register to be recognized as a device in this framework
     \begin{itemize}
-    \item \kstruct{uart_port} for serial port, \kstruct{netdev} for network
+    \item \kstruct{uart_port} for serial ports, \kstruct{netdev} for network
       devices, \kstruct{fb_info} for framebuffers, etc.
     \end{itemize}
   \item In addition to this structure, the driver usually needs to
@@ -596,8 +595,8 @@ struct rtl8150 {
   \frametitle{Link Between Structures 1/4}
   \begin{itemize}
   \item The framework typically contains a \kstruct{device} \code{*}
-    pointer that the driver must point to the corresponding struct
-    device
+    pointer that the driver must point to the corresponding
+    \kstruct{device}
     \begin{itemize}
     \item It's the relation between the logical device (for example a
       network interface) and the physical device (for example the USB
@@ -606,7 +605,7 @@ struct rtl8150 {
   \item The device structure also contains a \code{void *} pointer
     that the driver can freely use.
     \begin{itemize}
-    \item It's often use to link back the device to the higher-level
+    \item It's often used to link back the device to the higher-level
       structure from the framework.
     \item It allows, for example, from the \kstruct{platform_device}
       structure, to find the structure describing the logical device
