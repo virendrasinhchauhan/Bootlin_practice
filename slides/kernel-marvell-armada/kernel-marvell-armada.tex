@@ -45,6 +45,20 @@
   \end{center}
 \end{frame}
 
+\begin{frame}{Timeline: upcoming topics}
+  \begin{itemize}
+  \item Suspend/resume on Armada 38x, and suspend/resume support in
+    more device drivers
+  \item Armada 39x support
+  \item CPUfreq on 38x and 39x
+  \item Cryptographic support: extension of the existing
+    \code{mv_cesa} driver to use TDMA, support the new hashes and
+    crypto algorithms
+  \item Network improvements: multiqueue, RSS, etc.
+  \item More testing
+  \end{itemize}
+\end{frame}
+
 \begin{frame}{Using the result}
 
 \begin{itemize}
@@ -89,75 +103,47 @@
 
 \begin{frame}{Where is the code: platform code (2)}
 
-\footnotesize
-\begin{columns}
-\column{0.5\textwidth}
 \begin{itemize}
-\item {\bf board-v7.c} Core file for v7 platforms, includes the
+\item \code{board-v7.c} Core file for v7 platforms, includes the
   \code{DT_MACHINE_START} definition.
-\item {\bf coherency.c, coherency_ll.S} Coherency fabric code (for CPU
-  coherency on A370/XP and I/O coherency 370, XP, 375 and 38x)
-\item {\bf cpu-reset.c} Minimal driver to handle the CPU reset
+\item \code{coherency.c}, \code{coherency_ll.S} Coherency fabric code
+  (for CPU coherency on A370/XP and I/O coherency 370, XP, 375 and
+  38x)
+\item \code{cpu-reset.c} Minimal driver to handle the CPU reset
   register, used for SMP boot.
-\item {\bf dove.c} Core file for Dove platforms. Should be merged with
+\item \code{dove.c} Core file for Dove platforms. Should be merged with
   \code{board-v7.c} in the future.
-\item {\bf kirkwood.c} Core file for Kirkwood platforms. Should be
+\item \code{kirkwood.c} Core file for Kirkwood platforms. Should be
   renamed \code{board-v5.c} in the future.
-\item {\bf kirkwood-pm.c} Suspend/resume support for Kirkwood
+\item \code{kirkwood-pm.c} Suspend/resume support for Kirkwood
 \end{itemize}
-\column{0.5\textwidth}
+
+\end{frame}
+
+\begin{frame}{Where is the code: platform code (3)}
+
 \begin{itemize}
-\item {\bf mvebu-soc-id.c} SoC identification for 370, XP, 375, 38x
-\item {\bf netxbig.c} Remaining board support for Kirkwood. Should be
+\item \code{mvebu-soc-id.c} SoC identification for 370, XP, 375, 38x
+\item \code{netxbig.c} Remaining board support for Kirkwood. Should be
   removed at some point.
-\item {\bf platsmp.c, platsmp-a9.c, headsmp.S, headsmp-a9.S} SMP
-  support for Armada 370/XP and Armada 375/38x
-\item {\bf pm.c, pm-board.c} Suspend/resume support for Armada XP
-\item {\bf pmsu.c, pmsu_ll.S} Power Management Service Unit of Armada
+\item \code{platsmp.c}, \code{platsmp-a9.c}, \code{headsmp.S},
+  \code{headsmp-a9.S} SMP support for Armada 370/XP and Armada 375/38x
+\item \code{pm.c, pm-board.c} Suspend/resume support for Armada XP
+\item \code{pmsu.c}, \code{pmsu_ll.S} Power Management Service Unit of Armada
   370, XP, 38x (used for SMP, cpuidle, cpufreq, etc.)
-\item {\bf system-controller.c} Used for platform reset, SMP boot on
+\item \code{system-controller.c} Used for platform reset, SMP boot on
   some platforms.
 \end{itemize}
-\end{columns}
 
 \end{frame}
 
 \begin{frame}{Where is the code: Device Tree}
 
 In \code{arch/arm/boot/dts}
-\footnotesize
-\begin{columns}
-\column{0.5\textwidth}
-\begin{itemize}
-\item armada-370.dtsi
-\item armada-370-xp.dtsi
-\item armada-375.dtsi
-\item armada-380.dtsi
-\item armada-385.dtsi
-\item armada-38x.dtsi
-\item armada-xp.dtsi
-\item armada-xp-mv78230.dtsi
-\item armada-xp-mv78260.dtsi
-\item armada-xp-mv78460.dtsi
-\end{itemize}
-\column{0.5\textwidth}
-\begin{itemize}
-\item armada-370-db.dts
-\item armada-370-mirabox.dts
-\item armada-370-netgear-rn102.dts
-\item armada-370-netgear-rn104.dts
-\item armada-370-rd.dts
-\item armada-375-db.dts
-\item armada-385-db.dts
-\item armada-385-rd.dts
-\item armada-xp-axpwifiap.dts
-\item armada-xp-db.dts
-\item armada-xp-gp.dts
-\item armada-xp-matrix.dts
-\item armada-xp-netgear-rn2120.dts
-\item armada-xp-openblocks-ax3-4.dts
-\end{itemize}
-\end{columns}
+
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{slides/kernel-marvell-armada/device-trees.pdf}
+\end{center}
 
 \end{frame}
 
