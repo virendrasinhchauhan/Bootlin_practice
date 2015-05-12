@@ -1,15 +1,116 @@
-\section{Flash filesystems}
+\section{Using flash memories}
 
 \begin{frame}
-  \frametitle{The MTD subsystem}
-  MTD stands for {\em Memory Technology Devices}
+  \frametitle{Block devices vs flash devices}
+  \begin{itemize}
+  \item Block devices:
+    \begin{itemize}
+    \item Allow for random data access using fixed size blocks
+    \item Do not require special care when writing on the media
+    \item Block size is relatively small (minimum 512 bytes, can be
+      increased for performance reasons)
+    \item Considered as reliable (if the storage media is not, some
+      hardware or software parts are supposed to make it reliable)
+    \item Used by the {\em mtd-utils} utilities
+    \end{itemize}
+  \item Flash devices:
+    \begin{itemize}
+    \item Allow for random data access too
+    \item Require special care before writing on the media (erasing
+      the region you are about to write on)
+    \item Erase, write and read operation might not use the same block
+      size
+    \item Reliability depends on the flash technology
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{NAND flashes: how they work ?}
+  \begin{itemize}
+  \item Encode bits with Voltage levels
+  \item Start with all bits set to 1
+  \item Programming implies changing some bits from 1 to 0
+  \item Restoring bits to 1 is done via the ERASE operation
+  \item Programming and erasing is not done on a per bit or per byte
+    basis
+  \item Organization
+    \begin{itemize}
+    \item Page: minimum unit for PROGRAM operation
+    \item Block: minimum unit for ERASE operation
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{NAND flashes: organization}
+  \begin{center}
+    \includegraphics[scale=0.3]{slides/sysdev-flash-filesystems/nand-organization.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{NAND flashes: constraints}
+  \begin{itemize}
+  \item Reliability
+    \begin{itemize}
+    \item Far less reliable than NOR flashes
+    \item Reliability depends on the NAND flash technology (SLC, MLC)
+    \item Require additional mechanisms to correct errors: ECC (Error
+       Corrector Code)
+    \item ECC information stored in the OOB (Out-of-band area)
+    \end{itemize}
+  \item Lifetime
+    \begin{itemize}
+    \item Short lifetime compared to other storage media
+    \item Lifetime depends on the NAND flash technology (SLC, MLC):
+      between 1000000 and 1000 erase cycles per block
+    \item Wear leveling mechanisms are required
+    \item Bad block detection/handling required too
+    \end{itemize}
+  \item Despite the number of constraints brought by NAND they are
+    widely used in embedded systems for several reasons:
+    \begin{itemize}
+    \item Cheaper than other flash technologies
+    \item Provide high capacity storage
+    \item Provide good performances (both in read and write access)
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The MTD subsystem (1)}
+  \begin{itemize}
+  \item MTD stands for {\em Memory Technology Devices}
+  \item Generic subsystem dealing with all type of storage media that
+    are not fitting in the block subsystem
+  \item Supported media types: RAM, ROM, NORFLASH, NANDFLASH,
+    DATAFLASH
+  \item Independent of the communication interface (drivers available
+    for parallel, SPI, direct memory mapping, ...)
+  \item Abstract storage media characteristics and provide a simple
+    API to access MTD devices
+  \item MTD device characteristics exposed to users:
+    \begin{itemize}
+    \item \code{erasesize}: minimum erase size unit
+    \item \code{writesize}: minimum write size unit
+    \item \code{oobsize}: extra size to store metadata or ECC data
+    \item \code{size}: device size
+    \item \code{flags}: information about device type and capabilities
+    \end{itemize}
+  \item Various kind of MTD users: file-systems, block device emulation
+    layers, userspace interfaces, ...
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The MTD subsystem (2)}
   \begin{center}
     \includegraphics[width=\textwidth]{slides/sysdev-flash-filesystems/mtd-architecture.pdf}
   \end{center}
 \end{frame}
 
 \begin{frame}
-  \frametitle{MTD devices}
+  \frametitle{MTD devices: interface with userspace}
   \begin{itemize}
   \item MTD devices are visible in \code{/proc/mtd}
   \item The {\bf mtdchar} driver creates a character device for each
@@ -55,8 +156,10 @@
       \code{sda2})
     \item \code{/dev/mtd1} is either the second partition of the first
       flash device, or the first partition of the second flash device
-\end{itemize}
-\end{itemize}
+    \item Note that the master MTD device (the device those partitions
+      belongs to) is not exposed in /dev
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -148,6 +251,10 @@ Creating 5 MTD partitions on "omap2-nand.0":
     \item \code{Root filesystem} (16 MiB)
     \item \code{Data filesystem} (Remaining space)
     \end{itemize}
+  \item Be careful: when doing that you might impact MTD users which
+    have already stored data on existing partitions: e.g. a file system
+    might complain about data corruption if you change your partition
+    layout after its initialization
   \end{itemize}
 \end{frame}
 
@@ -163,41 +270,62 @@ Creating 5 MTD partitions on "omap2-nand.0":
 \end{frame}
 
 \begin{frame}
-  \frametitle{mtd-utils}
+  \frametitle{Flash wear leveling (1)}
   \begin{itemize}
-  \item A set of utilities to manipulate MTD devices
+  \item Wear leveling is about distributing write over the whole flash
+    device to avoid quickly loosing blocks that are written really often
+  \item Can be done in:
     \begin{itemize}
-    \item \code{mtdinfo} to get detailed information about an MTD device
-    \item \code{flash_eraseall} to completely erase a given MTD device
-    \item \code{flashcp} to write to NOR flash
-    \item \code{nandwrite} to write to NAND flash
-    \item UBI utilities
-    \item Flash filesystem image creation tools: \code{mkfs.jffs2},
-      \code{mkfs.ubifs}
+    \item the filesystem layer (JFFS2, YAFFS/YAFFS2, ...)
+    \item an intermediate layer dedicated to wear leveling (UBI)
     \end{itemize}
-  \item Usually available as the \code{mtd-utils} package in your distribution
-  \item Most commands now also available in BusyBox
-  \item See \url{http://www.linux-mtd.infradead.org/}
+  \item The wear leveling implementation is what makes your flash
+    lifetime good or not
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{jffs2}
+  \frametitle{Flash wear leveling (2)}
+  \begin{itemize}
+  \item Flash users should also take the limited lifetime of flash
+    devices into account by taking additional precautions
+    \begin{itemize}
+    \item Do not use your flash storage as swap area (rare in embedded
+      systems anyway)
+    \item Mount your filesystems as read-only, or use read-only
+      filesystems (SquashFS), whenever possible.
+    \item Keep volatile files in RAM (tmpfs)
+    \item Don't use the \code{sync} mount option (commits writes
+      immediately). Use the \code{fsync()} system call for per-file
+      synchronization.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Flash file-systems}
+  \begin{itemize}
+  \item 'Standard' file systems are meant to work on block devices
+  \item Specific file systems have been developed to deal flash
+    constraints
+  \item These file systems are relying on the MTD layer to access
+    flash chips
+  \item There exists several legacy flash filesystems which might be
+    useful for specific usage: JFFS2, YAFFS2, ...
+  \item Nowadays, a lot of people are using UBI/UBIFS, and it is the
+    de facto standard for medium to large capacity NANDs (128MB
+    to several GB)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Legacy flash filesystems: JFFS2}
   \begin{columns}
     \column{0.7\textwidth}
     \begin{itemize}
-    \item Today's standard filesystem for MTD flash
-    \item Nice features: on the fly compression (saves storage space
-      and reduces I/O), power down reliable, wear-leveling and ECC.
-    \item Drawbacks: doesn't scale well
-      \begin{itemize}
-      \item Mount time depending on filesystem size: the kernel has to
-        scan the whole filesystem at mount time, to read which block
-        belongs to each file.
-      \item Need to use the \code{CONFIG_JFFS2_SUMMARY} kernel option
-        to store such information in flash. This dramatically reduces
-        mount time (from 16 s to 0.8 s for a 128 MB partition).
-      \end{itemize}
+    \item Supports on the fly compression
+    \item Wear leveling, power failure resistant
+    \item Boot time depends on the filesystem size (doesn't scale well)
     \item \url{http://www.linux-mtd.infradead.org/doc/jffs2.html}
     \end{itemize}
     \column{0.3\textwidth}
@@ -206,108 +334,13 @@ Creating 5 MTD partitions on "omap2-nand.0":
 \end{frame}
 
 \begin{frame}
-  \frametitle{jffs2 - How to use}
-  On the Linux {\bf target}
-  \begin{itemize}
-  \item Need either the \code{mtd-utils} package from the MTD project,
-    or their embedded variants from Busybox
-  \item Erase and format a partition with jffs2:\\
-    \code{flash_eraseall -j /dev/mtd2}
-  \item Mount the partition:\\
-    \code{mount -t jffs2 /dev/mtdblock2 /mnt/flash}\\
-  \item Fill the contents by writing\\
-    (copying through the network or from external storage)
-  \item Other possibility: use a {\em jffs2} image (see next page to
-    make it):\\
-    \code{flash_eraseall /dev/mtd2}\\
-    \code{nandwrite -p /dev/mtd2 rootfs.jffs2}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{How to create a jffs2 image}
-  \begin{itemize}
-  \item \code{mkfs.jffs2} command available in the mtd-utils package.\\
-    Caution: unlike some \code{mkfs} commands, it doesn't create a
-    filesystem, but a filesystem image.
-  \item First, find the erase block size (on the target running Linux):\\
-    \code{cat /proc/mtd} \\
-    For example: \code{00040000} (256 KiB)
-  \item Then create the image on your workstation:\\
-    \code{mkfs.jffs2 --pad --no-cleanmarkers --eraseblock=256 -d rootfs/ -o rootfs.jffs2}
-  \item The \code{--pad} option pads the jffs2 image contents\\
-    until the end of the final erase block.
-  \item It is fine if the jffs2 image is smaller than the MTD partition.\\
-    The jffs2 file system will use the entire partition anyway.
-  \item The \code{--no-cleanmarkers} option is for NAND flash only.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Mounting a jffs2 image on your host}
-  Useful to edit \code{jffs2} images on your development system\\
-  Mounting an MTD device as a loop device is a bit complex task.\\
-  Here's an example for \code{jffs2}, for your reference:
-  \begin{itemize}
-  \item First find the erase block size used to create the jffs2 image.\\
-    Let's assume it is 256KiB (262144 bytes).
-  \item Create a block device from the image\\
-    \code{losetup /dev/loop0 root.jffs2}
-  \item Emulate an MTD device from a block device,\\
-    using the \code{block2mtd} kernel module\\
-    \code{modprobe block2mtd block2mtd=/dev/loop0,262144}
-  \item Load the mtdblock driver if needed\\
-    \code{modprobe mtdblock}
-  \item Finally, mount the filesystem (create \code{/mnt/jffs2} if needed)\\
-    \code{mount -t jffs2 /dev/mtdblock0 /mnt/jffs2}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Initializing jffs2 partitions from U-boot}
-  You may not want to have \code{mtd-utils} on your target!
-  \begin{itemize}
-  \item Create a JFFS2 image on your workstation
-  \item In the U-Boot prompt:
-    \begin{itemize}
-    \item Download the jffs2 image to RAM with \code{tftp}\\
-      Or copy this image to RAM from external storage\\
-      (U-boot understands FAT filesystems and supports USB storage)
-    \item Flash it inside an MTD partition\\
-      (exact instructions depending on flash type, NOR or NAND,\\
-      reuse the instructions used to flash your kernel). Make sure to
-      write only the size of the image, not more!
-    \end{itemize}
-  \item Limitation: need to split the jffs2 image in several chunks\\
-    if bigger than the RAM size.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Booting from a jffs2 root partition}
-  \begin{itemize}
-  \item To boot on a jffs2 root filesystem, add
-    \code{root=/dev/mtdblock<x>} and \code{rootfstype=jffs2} to the
-    Linux command line arguments.
-  \item The Linux kernel cannot autodetect the type of a root filesystem
-    in MTD flash. That's why the \code{rootfstype} kernel parameter is
-    needed.
-  \item For root partitions on a block device, using \code{rootfstype}
-    (for example: \code{rootfstype=ext3}) can reduce boot time a little
-    bit. This way, the kernel doesn't have to try all the block
-    filesystems it supports.
-  \end{itemize}
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{yaffs2}
+  \frametitle{Legacy flash filesystems: YAFFS2}
   \begin{columns}
     \column{0.7\textwidth}
     \begin{itemize}
     \item Mainly supports NAND flash
     \item No compression
-    \item Wear leveling, ECC, power failure resistant
+    \item Wear leveling, power failure resistant
     \item Fast boot time
     \item Code available separately through git\\
       (Dual GPL / Proprietary license\\
@@ -319,16 +352,25 @@ Creating 5 MTD partitions on "omap2-nand.0":
   \end{columns}
 \end{frame}
 
+
 \begin{frame}
-  \frametitle{yaffs2 - How to use}
-  \begin{itemize}
-  \item Erase a partition:\\
-    \code{flash_eraseall /dev/mtd2}
-  \item The filesystem is automatically formatted at the first mount:\\
-    \code{mount -t yaffs2 /dev/mtdblock2 /mnt/flash}
-  \item Images can be created with the \code{mkyaffs} tool, from \code{yaffs-utils}\\
-    \url{http://code.google.com/p/yaffs2utils/}
-  \end{itemize}
+  \frametitle{UBI/UBIFS}
+  \begin{columns}
+    \column{0.7\textwidth}
+    \begin{itemize}
+    \item Aimed at replacing JFFS2 by addressing its limitations
+    \item Design choices:
+      \begin{itemize}
+      \item Split the wear leveling and filesystem parts
+      \item Add some flexibility
+      \item Focus on scalability, performance and reliability
+      \item Introduce noticeable overhead (especially when used on small
+        devices or partitions)
+      \end{itemize}
+    \end{itemize}
+    \column{0.3\textwidth}
+    \includegraphics[width=\textwidth]{slides/sysdev-flash-filesystems/ubifs.pdf}
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -336,15 +378,16 @@ Creating 5 MTD partitions on "omap2-nand.0":
   Unsorted Block Images
   \begin{itemize}
   \item \url{http://www.linux-mtd.infradead.org/doc/ubi.html}
-  \item Volume management system on top of MTD devices.
+  \item Volume management system on top of MTD devices (similar to
+    what LVM provides for block devices)
   \item Allows to create multiple logical volumes and spread writes
-    across all physical blocks.
+    across all physical blocks
   \item Takes care of managing the erase blocks and wear
-    leveling. Makes filesystems easier to implement.
+    leveling. Makes filesystems easier to implement
   \item Wear leveling can operate on the whole storage,
-    not only on individual partitions (strong advantage).
+    not only on individual partitions (strong advantage)
   \item Volumes can be dynamically resized or, on the opposite, can be
-    read-only (static).
+    read-only (static)
   \end{itemize}
 \end{frame}
 
@@ -356,27 +399,65 @@ Creating 5 MTD partitions on "omap2-nand.0":
 \end{frame}
 
 \begin{frame}
-  \frametitle{UBIFS}
-  \begin{columns}
-    \column{0.7\textwidth}
-    \url{http://www.linux-mtd.infradead.org/doc/ubifs.html}
-    \begin{itemize}
-    \item The next generation of the jffs2 filesystem, from the same
-      linux-mtd developers.
-    \item Works on top of UBI volumes
-    \item Has a noticeable metadata overhead on very small partitions
-      (4M, 8M)
-    \end{itemize}
-    \column{0.3\textwidth}
-    \includegraphics[width=\textwidth]{slides/sysdev-flash-filesystems/ubifs.pdf}
-  \end{columns}
+  \frametitle{UBI: good practice}
+  \begin{itemize}
+  \item UBI is responsible for distributing writes all over the flash
+    device: the more space you assign to a partition attached to the
+    UBI layer the more efficient the wear leveling will be
+  \item If you need partitioning, use UBI volumes not MTD partitions
+  \item Some partitions will still have to be MTD partitions: e.g. the
+    bootloaders and bootloader environments
+  \item If you need extra MTD partitions, try to group them at the end
+    or the beginning of the flash device
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{UBI layout example}
+  \frametitle{UBI layout: bad example}
   \begin{center}
-    \includegraphics[width=\textwidth]{slides/sysdev-flash-filesystems/ubifs-layout.pdf}
+    \includegraphics[width=\textwidth]{slides/sysdev-flash-filesystems/ubifs-bad-layout.pdf}
   \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{UBI layout: good example}
+  \begin{center}
+    \includegraphics[width=\textwidth]{slides/sysdev-flash-filesystems/ubifs-good-layout.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{UBIFS}
+  Unsorted Block Images File System
+  \begin{itemize}
+  \item \url{http://www.linux-mtd.infradead.org/doc/ubifs.html}
+  \item The filesystem part of the UBI/UBIFS couple
+  \item Works on top of UBI volumes
+  \item Journaling file system providing better performances than
+    JFFS2 and addressing its scalability issues
+  \item See this paper for more technical details about UBIFS internals
+    \url{http://www.linux-mtd.infradead.org/doc/ubifs_whitepaper.pdf}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{mtd-utils}
+  \begin{itemize}
+  \item A set of utilities to manipulate MTD devices
+    \begin{itemize}
+    \item \code{mtdinfo} to get detailed information about an MTD device
+    \item \code{flash_erase} to partially or completely erase a given
+      MTD device
+    \item \code{flashcp} to write to NOR flash
+    \item \code{nandwrite} to write to NAND flash
+    \item UBI utilities
+    \item Flash filesystem image creation tools: \code{mkfs.jffs2},
+      \code{mkfs.ubifs}
+    \end{itemize}
+  \item Usually available as the \code{mtd-utils} package in your distribution
+  \item Most commands now also available in BusyBox
+  \item See \url{http://www.linux-mtd.infradead.org/}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -536,23 +617,6 @@ vol_alignment=1
 \end{frame}
 
 \begin{frame}
-  \frametitle{Reducing the number of writes}
-  \begin{itemize}
-  \item Of course, do not use your flash storage as swap area (rare in
-    embedded systems anyway)
-  \item Mount your filesystems as read-only, or use read-only
-    filesystems (SquashFS), whenever possible.
-  \item Keep volatile files in RAM (tmpfs)
-  \item Don't use the \code{sync} mount option (commits writes
-    immediately). Use the \code{fsync()} system call for per-file
-    synchronization.
-  \item You may decide to do without journaled filesystems. They cause
-    more writes, but are also much more power down resistant
-    (trade-off).
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
   \frametitle{Useful reading}
   \begin{itemize}
   \item Arnd Bergmann: Optimizing Linux with cheap flash drives\\
@@ -569,8 +633,8 @@ vol_alignment=1
 {Flash Filesystems}
 {
   \begin{itemize}
-  \item Creating partitions in your internal flash storage.
-  \item Use a read-only JFFS2 partition for the system
-  \item Use a read-write JFFS2 partition for data
+  \item Creating partitions in your internal flash storage
+  \item Create a UBI image with several volumes and flash it from u-boot
+  \item Manipulate UBI volumes from linux
   \end{itemize}
 }
