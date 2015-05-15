@@ -11,7 +11,6 @@
       increased for performance reasons)
     \item Considered as reliable (if the storage media is not, some
       hardware or software parts are supposed to make it reliable)
-    \item Used by the {\em mtd-utils} utilities
     \end{itemize}
   \item Flash devices:
     \begin{itemize}
@@ -679,6 +678,31 @@ vol_alignment=1
 \end{frame}
 
 \begin{frame}
+  \frametitle{U-Boot: UBI tools}
+  \begin{itemize}
+  \item Grouped under the \code{ubi} command
+    \begin{itemize}
+    \item \code{ubi part <part-name>} attach an MTD partition to the UBI
+      layer
+    \item \code{ubi info [layout]} display UBI device information (or
+      volume information if the \code{layout} string is passed
+    \item \code{ubi check <vol-name>} check if a volume exists
+    \item \code{ubi readvol <dest-addr> <vol-name> [<size>]} read volume
+      content
+    \item U-Boot also provides tools to update the UBI device content
+    \item Using them is highly discouraged (the U-Boot UBI implementation
+      is not entirely stable, and using commands that do not touch the UBI
+      metadata is safer)
+      \begin{itemize}
+      \item \code{ubi createvol <vol-name> [<size>] [<type>]}
+      \item \code{ubi removevol <vol-name>}
+      \item \code{ubi writevol <src-addr> <vol-name> <size>}
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
   \frametitle{Linux: UBI target tools (1)}
   \begin{itemize}
   \item Tools used on the target to dynamically create and modify
@@ -766,7 +790,7 @@ vol_alignment=1
     \item \code{rootfstype=ubifs root=ubi0:rootfs}: mount the
       \code{rootfs} volume on ubi0 as a UBIFS filesystem
     \end{itemize}
-  \item Example\code{rootfstype=ubifs ubi.mtd=1 root=ubi0:rootfs}
+  \item Example: \code{rootfstype=ubifs ubi.mtd=1 root=ubi0:rootfs}
   \end{itemize}
 \end{frame}
 
@@ -793,30 +817,13 @@ vol_alignment=1
   \end{itemize}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Issues with flash-based block storage}
-  \begin{itemize}
-  \item Flash storage made available only through a block interface.
-  \item Hence, no way to access a low level flash interface
-    and use the Linux filesystems doing wear leveling.
-  \item No details about the layer (Flash Translation Layer) they
-    use. Details are kept as trade secrets, and may hide poor
-    implementations.
-  \item Can use {\em flashbench}
-        (\url{https://github.com/bradfa/flashbench}) to find out
-        the erase block size and optimize filesystem formating.
-  \item Not knowing about the wear leveling algorithm,
-        it is highly recommended to limit the number of writes
-        to these devices.
-  \end{itemize}
-\end{frame}
+%\begin{frame}
+%  \frametitle{Linux: ubiblk (TODO ?)}
+%\end{frame}
 
 \begin{frame}
   \frametitle{Useful reading}
   \begin{itemize}
-  \item Arnd Bergmann: Optimizing Linux with cheap flash drives\\
-    In depth coverage of flash storage with a block interface.\\
-    \url{http://lwn.net/Articles/428584/}
   \item Managing flash storage with Linux:\\
     \url{http://free-electrons.com/blog/managing-flash-storage-with-linux/}
   \item Documentation on the linux-mtd website:\\
@@ -829,7 +836,8 @@ vol_alignment=1
 {
   \begin{itemize}
   \item Creating partitions in your internal flash storage
-  \item Creating a UBI image with several volumes and flash it from u-boot
+  \item Creating a UBI image with several volumes and flashing it from
+    U-Boot
   \item Manipulating UBI volumes from linux
   \end{itemize}
 }
