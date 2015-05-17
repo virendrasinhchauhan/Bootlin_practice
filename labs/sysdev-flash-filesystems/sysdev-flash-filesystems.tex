@@ -157,7 +157,7 @@ command \code{nand write}.
   not recommended writing more than one time on a page and its OOB
   even if the page is blank.}
 
-\section{loading kernel and DTB images from UBI and booting it}
+\section{Loading kernel and DTB images from UBI and booting it}
 
 Attach the UBI partition to the UBI layer and verify that all the
 UBI volumes are present.
@@ -223,9 +223,9 @@ Reboot your system and check that the \code{log} is correcly mounted.
 
 \section{Going further}
 
-UBI also provide and atomic update feature, which is particularly useful
-if you need to safely upgrade sensitive parts your system (kernel, DTB or
-rootfs).
+UBI also provides an atomic update feature, which is particularly useful
+if you need to safely upgrade sensitive parts of your system (kernel,
+DTB or rootfs).
 
 Duplicate the kernel volume and create a U-Boot script to fallback on
 the second kernel volume if the first one is corrupted:
