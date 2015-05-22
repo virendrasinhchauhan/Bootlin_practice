@@ -278,13 +278,7 @@ YOCTO_SLIDES    = \
 		yocto-resources \
 		last-slides
 
-BUILDROOT_SLIDES = \
-		first-slides \
-		about-us \
-		course-information-title \
-		beagleboneblack-board \
-		course-information \
-		setup-lab \
+BUILDROOT_CORE_SLIDES = \
 		buildroot-introduction \
 		buildroot-build \
 		buildroot-tree \
@@ -301,18 +295,38 @@ BUILDROOT_SLIDES = \
 		buildroot-internals \
 		buildroot-support-contribution \
 		buildroot-whats-new \
-		buildroot-acknowledgements \
+		buildroot-acknowledgements
+
+BUILDROOT_SLIDES = \
+		first-slides \
+		about-us \
+		course-information-title \
+		beagleboneblack-board \
+		course-information \
+		setup-lab \
+		$(BUILDROOT_CORE_SLIDES) \
 		last-slides
+
+AUTOTOOLS_CORE_SLIDES = \
+		autotools-usage \
+		autotools-basics \
+		autotools-advanced \
+		autotools-references
 
 AUTOTOOLS_SLIDES = first-slides \
 		about-us \
 		course-information-title \
 		course-information \
 		setup-lab \
-		autotools-usage \
-		autotools-basics \
-		autotools-advanced \
-		autotools-references \
+		$(AUTOTOOLS_CORE_SLIDES) \
+		last-slides
+
+AUTOTOOLSBUILDROOT_SLIDES = first-slides \
+		about-us \
+		course-information-title \
+		course-information \
+		$(AUTOTOOLS_CORE_SLIDES) \
+		$(BUILDROOT_CORE_SLIDES) \
 		last-slides
 
 # List of labs for the different courses
@@ -382,7 +396,7 @@ YOCTO_LABS    = setup \
 		yocto-sdk \
 		yocto-sdk-eclipse \
 
-BUILDROOT_LABS = setup \
+BUILDROOT_CORE_LABS = \
 		buildroot-basic \
 		buildroot-rootfs \
 		buildroot-new-packages \
@@ -390,10 +404,20 @@ BUILDROOT_LABS = setup \
 		buildroot-advanced \
 		buildroot-appdev
 
-AUTOTOOLS_LABS = setup \
+BUILDROOT_LABS = setup \
+		$(BUILDROOT_CORE_LABS)
+
+AUTOTOOLS_CORE_LABS = \
 		autotools-usage \
 		autotools-basics \
 		autotools-advanced
+
+AUTOTOOLS_LABS = setup \
+		$(AUTOTOOLS_CORE_LABS)
+
+AUTOTOOLSBUILDROOT_LABS = setup \
+		$(AUTOTOOLS_CORE_LABS) \
+		$(BUILDROOT_CORE_LABS)
 
 # Output directory
 OUTDIR   = $(PWD)/out
