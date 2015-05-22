@@ -817,9 +817,65 @@ vol_alignment=1
   \end{itemize}
 \end{frame}
 
-%\begin{frame}
-%  \frametitle{Linux: ubiblk (TODO ?)}
-%\end{frame}
+\begin{frame}
+  \frametitle{Linux: Block emualtion layers}
+  \begin{itemize}
+  \item Sometimes we need block devices to re-use existing block
+    filesystems
+  \item Particularly useful for read-only block filesystems like squashfs
+  \item Linux provides two block emulation layers:
+    \begin{itemize}
+    \item \code{mtdblock}: block devices emulated on top of MTD devices
+    \item \code{ubiblock}: block devices emulated on top of UBI volumes
+    \end{itemize}
+  \item For read access, using emulated block devices is exactly the same
+    as using regular
+  \item Even if supported through the \code{mtdblock} emulation layer,
+    writing on emulated block devices is highly discouraged (the emulation
+    layer does not properly deal with wear leveling and data retention
+    issues occurring on the flash media)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linux: mtdblock}
+  \begin{itemize}
+  \item The \code{mtdblock} layer creates a block device for each MTD
+    device of the system
+  \item Usually named \code{/dev/mtdblockX}, major 31. Minor is the
+    number of the MTD device
+  \item Allows read/write block-level access. But bad blocks are not
+    handled, and no wear leveling is done for writes.
+  \item For historical reasons JFFS2 filesystems require a block device
+    to be mounted
+  \item {\bf Do not write on mtdblock devices}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Linux: ubiblock}
+  \begin{itemize}
+  \item Preferred over \code{mtdblock} if UBI is available (UBI accounts
+    for data retention and wear leveling issues, while MTD does not)
+  \item The \code{ubiblock} layer creates {\bf read-only} block devices
+    on demand
+  \item The user specifies which static volumes he would like to attach
+    to \code{ubiblock}
+    \begin{itemize}
+    \item Through the \code{cmdline}: by passing
+      \code{ubi.block=<ubi-dev-id>,<volume-name>}
+    \item Using the \code{ubiblock} utility provided by \code{mtd-utils}:
+      \code{ubiblock --create <ubi-volume-dev-file>}
+    \end{itemize}
+
+   \item Usually named \code{/dev/ubiblockX_Y}, where X is the UBI device
+     id and Y is the UBI volume id
+   \item Major is dynamically assigned and stay the same for all
+     \code{ubiblock} devices
+   \item Minor is the id assigned to the \code{ubiblock} device (depends on
+     the total number of \code{ubiblock} devices and the creation order).
+  \end{itemize}
+\end{frame}
 
 \begin{frame}
   \frametitle{Useful reading}
