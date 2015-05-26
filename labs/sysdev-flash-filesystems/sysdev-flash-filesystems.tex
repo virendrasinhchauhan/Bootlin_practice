@@ -170,6 +170,13 @@ Set the \code{bootargs} variable so that:
 \begin{itemize}
 \item The \code{mtdparts} environment variable content is passed to
   the kernel through cmdline
+\footnote{Remember you can tweak your bootargs using u-boot env
+  variables before booting the kernel. To achieve that, create a
+  \code{bootargs_base} variable where you will store all the kernel
+  parameters except the mtdparts one. Then modify your \code{bootcmd}
+  to append the \code{mtdparts} definition to \code{bootargs_base}
+  before calling \code{bootz}:
+  \code{setenv bootargs $bootargs_base $mtdparts}}
 \item The UBI partition is automatically attached to the UBI layer at
   boot time
 \item The root filesystem is mounted from the 7\textsuperscript{th}
