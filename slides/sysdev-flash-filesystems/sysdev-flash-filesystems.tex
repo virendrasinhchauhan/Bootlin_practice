@@ -54,8 +54,8 @@
     \begin{itemize}
     \item Far less reliable than NOR flashes
     \item Reliability depends on the NAND flash technology (SLC, MLC)
-    \item Require additional mechanisms to correct errors: ECC (Error
-       Corrector Code)
+    \item Require additional mechanisms to recover from bit flips: ECC
+      (Error Corrector Code)
     \item ECC information stored in the OOB (Out-of-band area)
     \end{itemize}
   \item Lifetime
@@ -102,8 +102,8 @@
   \item MTD stands for {\em Memory Technology Devices}
   \item Generic subsystem dealing with all type of storage media that
     are not fitting in the block subsystem
-  \item Supported media types: RAM, ROM, NORFLASH, NANDFLASH,
-    DATAFLASH
+  \item Supported media types: RAM, ROM, NOR flash, NAND flash,
+    Dataflash
   \item Independent of the communication interface (drivers available
     for parallel, SPI, direct memory mapping, ...)
   \item Abstract storage media characteristics and provide a simple
@@ -151,7 +151,7 @@
     \item \code{/dev/mtd1} is either the second partition of the first
       flash device, or the first partition of the second flash device
     \item Note that the master MTD device (the device those partitions
-      belongs to) is not exposed in /dev
+      belongs to) is not exposed in \code{/dev}
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -217,13 +217,13 @@
 \begin{frame}
   \frametitle{U-Boot: using MTD partitions}
   \begin{itemize}
-  \item U-Boot provides a way to define mtd partitions on top flash
+  \item U-Boot provides a way to define mtd partitions on top of flash
     devices
-  \item Using partitions ease manipulation of flash devices, which might
+  \item Using partitions eases the manipulation of flash devices, which might
     be particularly error prone
   \item Requires two environment variables:
     \begin{itemize}
-    \item \code{mtdids} attach an mtdid to a flash device.
+    \item \code{mtdids} attaches an {\em mtdid} to a flash device.
       Example: \code{mtdids=<devid>=<mtdid>[,<devid>=<mtdid>]}
       \begin{itemize}
       \item \code{devid}: device identifier retrieved with
@@ -232,7 +232,7 @@
         name)
       \item \code{mtdid} is displayed when booting the linux kernel
       \end{itemize}
-    \item \code{mtdparts} attach an mtdid to a flash device
+    \item \code{mtdparts} defines the partitions for the different devices
     \end{itemize}
   \item Use the \code{mtdparts} command to setup the configuration
     specified by the \code{mtdids} and \code{mtdparts} variables
@@ -307,7 +307,7 @@ Creating 5 MTD partitions on "omap2-nand.0":
       number of the MTD device
     \item Allows read/write block-level access. But bad blocks are not
       handled, and no wear leveling is done for writes.
-    \item Primary use: mounting read only block filesystems or JFFS2
+    \item Primary use: mounting JFFS2 filesystems
     \item Do not write on mtdblock devices
     \end{itemize}
   \end{itemize}
@@ -316,7 +316,7 @@ Creating 5 MTD partitions on "omap2-nand.0":
 
 \begin{frame}[fragile]
   \frametitle{Linux: definition of MTD partitions (1)}
-  The Device Tree is the standard place to device MTD partitions
+  The Device Tree is the standard place to define MTD partitions
   for boards with Device Tree support.\\
   Example from \code{arch/arm/boot/dts/omap3-igep0020.dts}:
 \begin{minted}[fontsize=\scriptsize]{perl}
@@ -407,7 +407,8 @@ static struct mtd_partition igep2_flash_partitions[] = {
       MTD device
     \item \code{flashcp} to write to NOR flash
     \item \code{nandwrite} to write to NAND flash
-    \item Flash filesystem image creation tools: \code{mkfs.jffs2}
+    \item Flash filesystem image creation tools: \code{mkfs.jffs2},
+      \code{mkfs.ubifs}, \code{ubinize}, etc.
     \end{itemize}
   \item Usually available as the \code{mtd-utils} package in your distribution
   \item Most commands now also available in BusyBox
@@ -419,8 +420,9 @@ static struct mtd_partition igep2_flash_partitions[] = {
 \begin{frame}
   \frametitle{Flash wear leveling (1)}
   \begin{itemize}
-  \item Wear leveling is about distributing write over the whole flash
-    device to avoid quickly loosing blocks that are written really often
+  \item Wear leveling consists in distributing writes over the whole
+    flash device to avoid quickly reaching the maximum number of erase
+    cycles on blocks that are written really often
   \item Can be done in:
     \begin{itemize}
     \item the filesystem layer (JFFS2, YAFFS/YAFFS2, ...)
@@ -457,11 +459,10 @@ static struct mtd_partition igep2_flash_partitions[] = {
     constraints
   \item These file systems are relying on the MTD layer to access
     flash chips
-  \item There exists several legacy flash filesystems which might be
-    useful for specific usage: JFFS2, YAFFS2, ...
-  \item Nowadays, a lot of people are using UBI/UBIFS, and it is the
-    de facto standard for medium to large capacity NANDs (128MB
-    to several GB)
+  \item There are several legacy flash filesystems which might be
+    useful for specific usage: JFFS2, YAFFS2.
+  \item Nowadays, UBI/UBIFS is the de facto standard for medium to
+    large capacity NANDs (above 128MB)
   \end{itemize}
 \end{frame}
 
@@ -472,7 +473,9 @@ static struct mtd_partition igep2_flash_partitions[] = {
     \begin{itemize}
     \item Supports on the fly compression
     \item Wear leveling, power failure resistant
-    \item Boot time depends on the filesystem size (doesn't scale well)
+    \item Available in the official Linux kernel
+    \item Boot time depends on the filesystem size: doesn't scale well
+      for large partitions.
     \item \url{http://www.linux-mtd.infradead.org/doc/jffs2.html}
     \end{itemize}
     \column{0.3\textwidth}
@@ -489,9 +492,9 @@ static struct mtd_partition igep2_flash_partitions[] = {
     \item No compression
     \item Wear leveling, power failure resistant
     \item Fast boot time
-    \item Code available separately through git\\
-      (Dual GPL / Proprietary license\\
-      for non Linux operating systems)
+    \item Not part of the official Linux kernel: code only available
+      separately\\
+      (Dual GPL / Proprietary license for non Linux operating systems)
     \item \url{http://www.yaffs.net/}
     \end{itemize}
     \column{0.3\textwidth}
@@ -508,12 +511,12 @@ static struct mtd_partition igep2_flash_partitions[] = {
     \item Aimed at replacing JFFS2 by addressing its limitations
     \item Design choices:
       \begin{itemize}
-      \item Split the wear leveling and filesystem parts
+      \item Split the wear leveling and filesystem layers
       \item Add some flexibility
       \item Focus on scalability, performance and reliability
-      \item Introduce noticeable overhead (especially when used on small
-        devices or partitions)
       \end{itemize}
+    \item Drawback: introduces noticeable overhead, especially when
+      used on small devices or partitions
     \end{itemize}
     \column{0.3\textwidth}
     \includegraphics[width=\textwidth]{slides/sysdev-flash-filesystems/ubifs.pdf}
@@ -818,7 +821,7 @@ vol_alignment=1
 \end{frame}
 
 \begin{frame}
-  \frametitle{Linux: Block emualtion layers}
+  \frametitle{Linux: Block emulation layers}
   \begin{itemize}
   \item Sometimes we need block devices to re-use existing block
     filesystems
@@ -829,11 +832,13 @@ vol_alignment=1
     \item \code{ubiblock}: block devices emulated on top of UBI volumes
     \end{itemize}
   \item For read access, using emulated block devices is exactly the same
-    as using regular
+    as using regular FIXME FIXME
   \item Even if supported through the \code{mtdblock} emulation layer,
-    writing on emulated block devices is highly discouraged (the emulation
-    layer does not properly deal with wear leveling and data retention
-    issues occurring on the flash media)
+    writing on emulated block devices is highly discouraged
+    \begin{itemize}
+    \item the emulation layer does not properly deal with wear
+      leveling and data retention issues occurring on the flash media
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
