@@ -20,12 +20,14 @@ make our system use its internal flash storage.
 Create an MTD partition to be attached to the UBI layer (the partitions
 previously used to store the kernel image and the DTB should be merged
 with this UBI partition).
-Kernel and DTB images will should be stored in two separate static
+
+The kernel and DTB images will be stored in two separate {\em static}
 (read-only) UBI volumes.
-The root filesystem will be a UBIFS volume (still mounted in a read-only).
-Read/write data will be stored in a UBIFS file system too.
-As for the kernel and DTB images, the root and data filesystems will be
-placed in a UBI volumes (this time we will use dynamic volumes).
+
+The root filesystem will be a UBI volume storing a UBIFS filesystem
+mounted read-only, the web server upload data will be stored in
+another UBI volume storing a UBIFS filesystem mounted
+read/write. These volumes will be {\em dynamic} volumes.
 
 Which gives the following layout:
 
@@ -53,10 +55,6 @@ directory from the previous lab.
 Now, we will get back to the root filesystem contents in the
 \code{nfsroot} directory, and will generate a UBIFS image from them.
 
-First enable the ubi tools in busybox (\code{ubiattach},
-\code{ubidetach}, \code{ubimkvol}, ...), then recompile and reinstall
-\code{busybox} in you rootfs directory.
-
 Now, modify the \code{/etc/init.d/rcS} file to mount a UBIFS filesystem
 on the \code{data} volume (we will declare UBI volumes in the next
 section), instead of an ext3 filesystem on the third MMC disk partition.
@@ -69,9 +67,9 @@ options as for the data filesystem.
 Create a ubinize config file where you will define the 4 volumes
 described above, then use the \code{ubinize} tool to generate your
 UBI image.
-Warning: do not use the autoresize flag (\code{vol_flags=autoresize})
-(U-Boot corrupts the UBI metadata when trying to resize expand the
-volume).
+
+Warning: do not use the autoresize flag (\code{vol_flags=autoresize}):
+U-Boot corrupts the UBI metadata when trying to expand the volume.
 
 Remember that some of these volumes are static (read-only) and some are
 not.
@@ -127,9 +125,9 @@ not.
 
 \section{MTD partitioning and flashing}
 
-Look at the way default flash partitions are defined in the board
-Device Tree sources
-(\code{arch/arm/boot/dts/at91-sama5d3_xplained.dts}).
+Look at the way the default flash partitions are defined in the board
+Device Tree source (\code{arch/arm/boot/dts/at91-sama5d3_xplained.dts}
+in your kernel tree).
 
 However, they do not match the way we wish to organize our flash
 storage. Therefore, we will define our own partitions at boot time,
@@ -159,16 +157,13 @@ command \code{nand write}.
 
 \section{Loading kernel and DTB images from UBI and booting it}
 
-Attach the UBI partition to the UBI layer and verify that all the
-UBI volumes are present.
+From Linux (still booting from the external MMC), attach the UBI
+partition to the UBI layer and verify that all the UBI volumes are
+present.
 
-Now, retrieve the kernel and DTB images from their respective UBI
-volumes and try to boot them. If it works, you can modify your
-\code{bootcmd} accordingly.
-
-
-Don't forget that you can write U-Boot scripts to automate these
-procedures. This is very handy to avoid mistakes when typing commands!
+Now back in U-Boot, retrieve the kernel and DTB images from their
+respective UBI volumes and try to boot them. If it works, you can
+modify your \code{bootcmd} accordingly.
 
 Set the \code{bootargs} variable so that:
 
@@ -180,37 +175,33 @@ Set the \code{bootargs} variable so that:
 \item The root filesystem is mounted from the 7\textsuperscript{th}
   partition, and is mounted read-only (kernel parameter
   \code{ro}).
-  \begin{itemize}
-  \item \bf{Important: even if this partition is mounted read-only,
-      the MTD partition itself must be declared as read-write.
-      Otherwise, Linux won't be able to perform ECC checks on it,
-      which involve both reading and writing.}
-  \end{itemize}
 \end{itemize}
 
-Boot the target, check that MTD partitions and UBI volumes are correctly
-configured, and that your system still works as expected. Your root
-filesystem should be mounted read-only, while the data filesystem should
-be mounted read-write, allowing you to upload data using the web server.
+Boot the target, check that the MTD partitions and UBI volumes are
+correctly configured, and that your system still works as
+expected. Your root filesystem should be mounted read-only, while the
+data filesystem should be mounted read-write, allowing you to upload
+data using the web server.
 
 %Useful u-boot environment variables
 %mtdids=nand0=atmel_nand
 %mtdparts=mtdparts=atmel_nand:256k(bootstrap),512k(u-boot),256k(u-boot-env1),256k(u-boot-env2),-(UBI)
-%bootargs_base=console=ttyS0,115200 rootfstype=ubifs root=ubi0:root ip=dhcp ubi.mtd=4 rw
+%bootargs_base=console=ttyS0,115200 rootfstype=ubifs root=ubi0:root ip=dhcp ubi.mtd=4 ro
 %bootcmd=mtdparts; ubi part UBI; ubi readvol 0x21000000 kernel; ubi readvol 0x22000000 dtb; setenv bootargs $bootargs_base $mtdparts; bootz 0x21000000 - 0x22000000
 %flash=mtdparts; nand erase.part UBI; tftp 0x21000000 test.ubi; nand write.trimffs 0x21000000 UBI $filesize
 
-\section{Resizing an existing volume and creating a new one}
+\section{Going further}
 
-In some cases you might want to adpat your NAND partitioning without
+\subsection{Resizing an existing volume and creating a new one}
+
+In some cases you might need to adapt your NAND partitioning without
 re-flashing everything. Thanks to UBI this is possible.
 
-Resize the \code{data} volume to occupy the remaining 50MiB.
+From Linux, resize the \code{data} volume to occupy the remaining
+50MiB, and then create a new \code{log} volume of 16MiB. Mount this
+volume as a UBIFS filesystem and see what happens.
 
-Create a new \code{log} volume of 16MiB
-Mount this volume as a UBIFS filesystem and see what happens.
-
-Update your init script to mount the UBI \code{log} volume on /var/log.
+Update your init script to mount the UBI \code{log} volume on \code{/var/log}.
 Reboot your system and check that the \code{log} is correcly mounted.
 
 % Hints:
@@ -220,8 +211,7 @@ Reboot your system and check that the \code{log} is correcly mounted.
 %mount -t ubifs ubi0:log /var/log
 %
 
-
-\section{Going further}
+\subsection{Atomic update}
 
 UBI also provides an atomic update feature, which is particularly useful
 if you need to safely upgrade sensitive parts of your system (kernel,
@@ -232,7 +222,7 @@ the second kernel volume if the first one is corrupted:
 \begin{itemize}
   \item First create a new static volume to store your kernel backup
   \item Flash a valid kernel on the backup volume
-  \item Modify your bootcmd to fallback to the backup volume if the first one
+  \item Modify your \code{bootcmd} to fallback to the backup volume if the first one
     is corrupted
   \item Now try to update the kernel volume and interrupt the process before
     it has finished and see what happens (unplug the platform)
@@ -244,25 +234,26 @@ the second kernel volume if the first one is corrupted:
 
 %TODO: provide a correction
 
-\section{Going even further}
+\subsection{Using {\em squashfs} for the root filesystem}
 
 Root filesystems are often a sensitive part of your system, and you don't
 want it to be corrupted, hence some people decide to use read-only
 file system for their rootfs and use another file system to store their
 auxiliary data.
 
-\code{squashfs} is one of these read-only file systems, the problem is:
-it expects to be mounted on a block device.
+\code{squashfs} is one of these read-only file systems. However,
+\code{squashfs} expects to be mounted on a block device.
 
-Use the ubiblk layer to emulate a read-only block device on top of a static
-UBI volume to mount a rootfs squashfs filesystem:
+Use the {\em ubiblk} layer to emulate a read-only block device on top
+of a static UBI volume to mount a {\em squashfs} filesystem as the
+root filesystem:
+
 \begin{itemize}
-  \item First Create a squashfs image with your rootfs content
+  \item First create a {\em squashfs} image with your rootfs content
   \item Then create a new static volume to store your squashfs and update it with
     your squashfs image
-  \item Enable and setup the ubiblk layer
+  \item Enable and setup the {\em ubiblk} layer
   \item Boot on your new rootfs
 \end{itemize}
 
 %TODO: provide a correction
-
