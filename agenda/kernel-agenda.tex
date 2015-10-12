@@ -20,7 +20,7 @@
 \LARGE
 Embedded Linux kernel and driver development training\\
 \large
-5-day session
+4-day session
 \end{center}
 \vspace{1cm}
 
@@ -47,8 +47,8 @@ Embedded Linux kernel and driver development training\\
     \newline \url{http://free-electrons.com/doc/training/linux-kernel}. \\
     \hline
 
-    {\bf Duration} & {\bf Five} days - 40 hours (8 hours per day).
-    \newline 50\% of lectures, 50\% of practical labs. \\
+    {\bf Duration} & {\bf Four} days - 32 hours (8 hours per day).
+    \newline 50\% of lectures (morning), 50\% of practical labs (afternoon). \\
     \hline
 
     {\bf Trainer} & One of the engineers listed on
@@ -70,9 +70,8 @@ Embedded Linux kernel and driver development training\\
     with creating and dealing with complex data types and structures,
     with pointers to such symbols, as well as with function pointers. \vspace{1em}
     \newline {\bf Knowledge and practice of UNIX or GNU/Linux commands}
-    \newline People lacking experience on this topic should get
-    trained by themselves, for example with our freely available on-line slides
-    (\url{http://free-electrons.com/docs/command-line/}).\vspace{1em}
+    \newline This 4-day agenda will not be achievable if the above two
+    requirements are not met.\vspace{1em}
     \newline {\bf Experience in embedded Linux development}.
     \newline Taking our Embedded Linux course
     (\url{http://free-electrons.com/training/embedded-linux/})
@@ -81,6 +80,30 @@ Embedded Linux kernel and driver development training\\
     They will understand the development environment
     and board manipulations better, allowing them to concentrate on
     kernel code programming.
+    \\
+    \hline 
+  \end{tabularx}
+
+  \begin{tabularx}{\textwidth}{|g|h|}
+    {\bf Assumptions} &
+
+    {\bf Flexible lunch break time - Tentative agenda}
+    \newline As the time to teach the lectures will depend on the number
+    of questions from the audience, the time to deliver the morning
+    lectures may have to be adapted every day to complete the lectures
+    schedule every day. If some participants only take the lectures,
+    they shouldn't plan other tasks in the afternoon before 1:30 pm. 
+    \newline {\bf Anyway, even though Free Electrons will do its best efforts to meet
+    the schedule in this agenda, Free Electrons won't be able to give
+    a formal guarantee that this goal will be met, as it will depend on
+    the actual progress of the class, both in lectures and in practical labs.}
+    \vspace{1em}
+    \newline {\bf Attending lectures mandatory for the labs}
+    \newline To participate to practical labs, attending to the
+    lectures in the morning will be required. To ensure that the lab
+    schedule is met, the trainer will only support groups of people who have
+    followed the lectures.
+    \vspace{1em}
     \\
     \hline
   \end{tabularx}
@@ -176,7 +199,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 \\
-\feagendatwocolumn
+\feagendaonecolumn
 {Lecture - Kernel sources}
 {
   \begin{itemize}
@@ -188,19 +211,8 @@ Embedded Linux kernel and driver development training\\
     Reference (LXR)
   \end{itemize}
 }
-{Lab - Kernel sources}
-{
-  \begin{itemize}
-  \item Making searches in the Linux kernel sources: looking for C
-    definitions, for definitions of kernel configuration parameters,
-    and for other kinds of information.
-  \item Using the Unix command line and then kernel source code
-    browsers.
- \end{itemize}
-}
 
-\section{Day 1 - Afternoon}
-\feagendatwocolumn
+\feagendaonecolumn
 {Lecture - Configuring, compiling and booting the Linux kernel}
 {
   \begin{itemize}
@@ -210,18 +222,8 @@ Embedded Linux kernel and driver development training\\
   \item Mounting a root filesystem on NFS.
   \end{itemize}
 }
-{Lab - Kernel configuration, cross-compiling and booting on NFS}
-{
-  {\em Using the BeagleBone Black board}
-  \begin{itemize}
-  \item Configuring, cross-compiling and booting a Linux kernel with
-    NFS boot support.
-  \end{itemize}
-}
-\\
-\section{Day 2 - Morning}
 
-\feagendatwocolumn
+\feagendaonecolumn
 {Lecture - Linux kernel modules}
 {
   \begin{itemize}
@@ -233,19 +235,8 @@ Embedded Linux kernel and driver development training\\
   \item Adding sources to the kernel tree
   \end{itemize}
 }
-{Lab - Writing modules}
-{
-  {\em Using the BeagleBone Black board}
-  \begin{itemize}
-  \item Write a kernel module with several capabilities.
-  \item Access kernel internals from your module.
-  \item Set up the environment to compile it
-  \end{itemize}
-}
 
-\section{Day 2 - Afternoon}
-
-\feagendatwocolumn
+\feagendaonecolumn
 {Lecture - Linux device model}
 {
   \begin{itemize}
@@ -257,6 +248,43 @@ Embedded Linux kernel and driver development training\\
   \item Interface in user space: \code{/sys}
   \end{itemize}
 }
+
+\section{Day 1 - Afternoon}
+
+\feagendaonecolumn
+{Lab - Kernel sources}
+{
+  \begin{itemize}
+  \item Making searches in the Linux kernel sources: looking for C
+    definitions, for definitions of kernel configuration parameters,
+    and for other kinds of information.
+  \item Using the Unix command line and then kernel source code
+    browsers.
+ \end{itemize}
+}
+
+\feagendaonecolumn
+{Lab - Kernel configuration, cross-compiling and booting on NFS}
+{
+  {\em Using the BeagleBone Black board}
+  \begin{itemize}
+  \item Configuring, cross-compiling and booting a Linux kernel with
+    NFS boot support.
+  \end{itemize}
+}
+
+\feagendaonecolumn
+{Lab - Writing modules}
+{
+  {\em Using the BeagleBone Black board}
+  \begin{itemize}
+  \item Write a kernel module with several capabilities.
+  \item Access kernel internals from your module.
+  \item Set up the environment to compile it
+  \end{itemize}
+}
+
+\feagendaonecolumn
 {Lab - Linux device model for an I2C driver}
 {
   {\em Using the BeagleBone Black board}
@@ -268,7 +296,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\section{Day 3 - Morning}
+\section{Day 2 - Morning}
 
 \feagendatwocolumn
 {Lecture - Introduction to the I2C API}
@@ -288,20 +316,6 @@ Embedded Linux kernel and driver development training\\
 }
 
 \feagendaonecolumn
-{Lab - Communicate with the Nunchuk over I2C}
-{
-  {\em Using the BeagleBone Black board}
-  \begin{itemize}
-  \item Configure the pin muxing for the I2C bus used to communicate
-    with the Nunchuk
-  \item Extend the I2C driver started in the previous lab to
-    communicate with the Nunchuk via I2C
-  \end{itemize}
-}
-
-\section{Day 3 - Afternoon}
-
-\feagendaonecolumn
 {Lecture - Kernel frameworks}
 {
   \begin{itemize}
@@ -313,7 +327,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\feagendatwocolumn
+\feagendaonecolumn
 {Lecture - The input subsystem}
 {
   \begin{itemize}
@@ -323,6 +337,22 @@ Embedded Linux kernel and driver development training\\
   \item User space API offered by the {\em input} subsystem
   \end{itemize}
 }
+
+\section{Day 2 - Afternoon}
+
+\feagendaonecolumn
+{Lab - Communicate with the Nunchuk over I2C}
+{
+  {\em Using the BeagleBone Black board}
+  \begin{itemize}
+  \item Configure the pin muxing for the I2C bus used to communicate
+    with the Nunchuk
+  \item Extend the I2C driver started in the previous lab to
+    communicate with the Nunchuk via I2C
+  \end{itemize}
+}
+
+\feagendaonecolumn
 {Lab - Expose the Nunchuk functionality to user space}
 {
   {\em Using the BeagleBone Black board}
@@ -334,7 +364,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\section{Day 4 - Morning}
+\section{Day 3 - Morning}
 
 \feagendatwocolumn
 {Lecture - Memory management}
@@ -355,6 +385,17 @@ Embedded Linux kernel and driver development training\\
   \item Read / write memory barriers.
   \end{itemize}
 }
+\feagendaonecolumn
+{Lecture - The misc kernel subsystem}
+{
+  \begin{itemize}
+  \item What the {\em misc} kernel subsystem is useful for
+  \item API of the {\em misc} kernel subsystem, both the kernel side
+    and user space side
+  \end{itemize}
+}
+
+\section{Day 3 - Afternoon}
 
 \feagendaonecolumn
 {Lab - Minimal platform driver and access to I/O memory}
@@ -370,17 +411,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\section{Day 4 - Afternoon}
-
-\feagendatwocolumn
-{Lecture - The misc kernel subsystem}
-{
-  \begin{itemize}
-  \item What the {\em misc} kernel subsystem is useful for
-  \item API of the {\em misc} kernel subsystem, both the kernel side
-    and user space side
-  \end{itemize}
-}
+\feagendaonecolumn
 {Lab - Output-only serial port driver}
 {
   {\em Using the BeagleBone Black board}
@@ -393,7 +424,9 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\feagendatwocolumn
+\section{Day 4 - Morning}
+
+\feagendaonecolumn
 {Lecture - Processes, scheduling, sleeping and interrupts}
 {
   \begin{itemize}
@@ -403,6 +436,58 @@ Embedded Linux kernel and driver development training\\
     registration and programming, scheduling deferred work.
   \end{itemize}
 }
+
+\feagendaonecolumn
+{Lecture - Locking}
+{
+  \begin{itemize}
+  \item Issues with concurrent access to shared resources
+  \item Locking primitives: mutexes, semaphores, spinlocks.
+  \item Atomic operations.
+  \item Typical locking issues.
+  \item Using the lock validator to identify the sources of locking
+    problems.
+  \end{itemize}
+}
+
+\feagendaonecolumn
+{Lecture - Driver debugging techniques}
+{
+  \begin{itemize}
+  \item Debugging with printk
+  \item Using Debugfs
+  \item Analyzing a kernel oops
+  \item Using kgdb, a kernel debugger
+  \item Using the Magic SysRq commands
+  \item Debugging through a JTAG probe
+  \end{itemize}
+}
+
+\feagendaonecolumn
+{Lecture - ARM board support and SoC support}
+{
+  \begin{itemize}
+  \item Understand the organization of the ARM support code
+  \item Understand how the kernel can be ported to a new hardware
+    board
+  \end{itemize}
+}
+
+\feagendaonecolumn
+{Lecture - The Linux kernel development process}
+{
+  {\em If time left}
+  \begin{itemize}
+  \item Organization of the kernel community
+  \item The release schedule and process: release candidates, stable
+    releases, long-term support, etc.
+  \item Legal aspects, licensing.
+  \item How to submit patches to contribute code to the community.
+  \end{itemize}
+}
+\section{Day 4 - Afternoon}
+
+\feagendaonecolumn
 {Lab - Sleeping and handling interrupts in a device driver}
 {
   {\em Using the BeagleBone Black board}
@@ -415,20 +500,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\section{Day 5 - Morning}
-
-\feagendatwocolumn
-{Lecture - Locking}
-{
-  \begin{itemize}
-  \item Issues with concurrent access to shared resources
-  \item Locking primitives: mutexes, semaphores, spinlocks.
-  \item Atomic operations.
-  \item Typical locking issues.
-  \item Using the lock validator to identify the sources of locking
-    problems.
-  \end{itemize}
-}
+\feagendaonecolumn
 {Lab - Locking}
 {
   {\em Using the BeagleBone Black board}
@@ -438,18 +510,7 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\feagendatwocolumn
-{Lecture - Driver debugging techniques}
-{
-  \begin{itemize}
-  \item Debugging with printk
-  \item Using Debugfs
-  \item Analyzing a kernel oops
-  \item Using kgdb, a kernel debugger
-  \item Using the Magic SysRq commands
-  \item Debugging through a JTAG probe
-  \end{itemize}
-}
+\feagendaonecolumn
 {Lab - Investigating kernel faults}
 {
   {\em Using the BeagleBone Black board}
@@ -457,39 +518,6 @@ Embedded Linux kernel and driver development training\\
   \item Studying a broken driver.
   \item Analyzing a kernel fault message and locating the problem in the
     source code.
-  \end{itemize}
-}
-
-\section{Day 5 - Afternoon}
-
-\feagendatwocolumn
-{Lecture - ARM board support and SoC support}
-{
-  \begin{itemize}
-  \item Understand the organization of the ARM support code
-  \item Understand how the kernel can be ported to a new hardware
-    board
-  \end{itemize}
-}
-{Lecture - Power management}
-{
-  \begin{itemize}
-  \item Overview of the power management features of the kernel
-  \item Topics covered: clocks, suspend and resume, dynamic frequency
-    scaling, saving power during idle, runtime power management,
-    regulators, etc.
-  \end{itemize}
-}
-
-\feagendaonecolumn
-{Lecture - The Linux kernel development process}
-{
-  \begin{itemize}
-  \item Organization of the kernel community
-  \item The release schedule and process: release candidates, stable
-    releases, long-term support, etc.
-  \item Legal aspects, licensing.
-  \item How to submit patches to contribute code to the community.
   \end{itemize}
 }
 
