@@ -395,37 +395,6 @@ Embedded Linux kernel and driver development training\\
   \end{itemize}
 }
 
-\section{Day 3 - Afternoon}
-
-\feagendaonecolumn
-{Lab - Minimal platform driver and access to I/O memory}
-{
-  {\em Using the BeagleBone Black board}
-  \begin{itemize}
-  \item Implement a minimal platform driver
-  \item Modify the Device Tree to instantiate the new serial port
-    device.
-  \item Reserve the I/O memory addresses used by the serial port.
-  \item Read device registers and write data to them, to send
-    characters on the serial port.
-  \end{itemize}
-}
-
-\feagendaonecolumn
-{Lab - Output-only serial port driver}
-{
-  {\em Using the BeagleBone Black board}
-  \begin{itemize}
-  \item Extend the driver started in the previous lab by registering
-    it into the {\em misc} subsystem
-  \item Implement serial port output functionality through the {\em
-      misc} subsystem
-  \item Test serial output from user space
-  \end{itemize}
-}
-
-\section{Day 4 - Morning}
-
 \feagendaonecolumn
 {Lecture - Processes, scheduling, sleeping and interrupts}
 {
@@ -436,6 +405,8 @@ Embedded Linux kernel and driver development training\\
     registration and programming, scheduling deferred work.
   \end{itemize}
 }
+
+\section{Day 3 - Afternoon}
 
 \feagendaonecolumn
 {Lecture - Locking}
@@ -485,6 +456,36 @@ Embedded Linux kernel and driver development training\\
   \item How to submit patches to contribute code to the community.
   \end{itemize}
 }
+
+\section{Day 4 - Morning}
+
+\feagendaonecolumn
+{Lab - Minimal platform driver and access to I/O memory}
+{
+  {\em Using the BeagleBone Black board}
+  \begin{itemize}
+  \item Implement a minimal platform driver
+  \item Modify the Device Tree to instantiate the new serial port
+    device.
+  \item Reserve the I/O memory addresses used by the serial port.
+  \item Read device registers and write data to them, to send
+    characters on the serial port.
+  \end{itemize}
+}
+
+\feagendaonecolumn
+{Lab - Output-only serial port driver}
+{
+  {\em Using the BeagleBone Black board}
+  \begin{itemize}
+  \item Extend the driver started in the previous lab by registering
+    it into the {\em misc} subsystem
+  \item Implement serial port output functionality through the {\em
+      misc} subsystem
+  \item Test serial output from user space
+  \end{itemize}
+}
+
 \section{Day 4 - Afternoon}
 
 \feagendaonecolumn
