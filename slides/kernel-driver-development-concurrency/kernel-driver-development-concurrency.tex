@@ -39,15 +39,41 @@
     where sleeping is allowed.
   \item Mutex definition:
     \begin{itemize}
-    \item \mint{c}+#include <linux/mutex.h>+
+    \item \kstruct{mutex} type defined in \code{linux/mutex.h}
+    \item \kstruct{mutex} is typically embedded in a per-device
+      structure. Example:
+    \begin{minted}{c}
+#include <linux/mutex.h>
+struct atmel_pwm_chip {
+        void __iomem *base;
+        ...
+        struct mutex isr_lock;
+};
+    \end{minted}
     \end{itemize}
-  \item Initializing a mutex statically:
-    \begin{itemize}
-    \item \mint{c}+DEFINE_MUTEX(name);+
-    \end{itemize}
-  \item Or initializing a mutex dynamically:
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Initializing Linux mutexes}
+  \begin{itemize}
+  \item Initializing a mutex dynamically
     \begin{itemize}
     \item \mint{c}+void mutex_init(struct mutex *lock);+
+    \item Typical example: initialization in a per-device structure
+      allocated in a \code{probe()} function:
+      \begin{minted}{c}
+atmel_pwm = devm_kzalloc(&pdev->dev, sizeof(*atmel_pwm),
+                         GFP_KERNEL);
+...
+mutex_init(&atmel_pwm->isr_lock);
+      \end{minted}
+    \end{itemize}
+  \item Initializing a mutex statically\\
+    (in cases when a global lock is sufficient):
+    \begin{itemize}
+    \item \mint{c}+DEFINE_MUTEX(name);+
     \end{itemize}
   \end{itemize}
 \end{frame}
