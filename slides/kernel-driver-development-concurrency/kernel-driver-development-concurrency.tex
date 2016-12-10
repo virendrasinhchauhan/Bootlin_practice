@@ -217,14 +217,15 @@ static unsigned int ulite_tx_empty
 
 \begin{frame}
   \frametitle{Deadlock Situations}
+  They can lock up your system. Make sure they never happen!
   \begin{itemize}
-  \item They can lock up your system. Make sure they never happen!
-  \item Don't call a function that can try to get access to the same
+  \item Rule: never call a function that can try to get access to the same
     lock
     \begin{center}
       \includegraphics[height=0.3\textheight]{slides/kernel-driver-development-concurrency/deadlock-same-lock.pdf}
     \end{center}
-  \item Holding multiple locks is risky!
+  \item Rule: when you use multiple locks, always acquire them in the
+    same order
     \begin{center}
       \includegraphics[height=0.3\textheight]{slides/kernel-driver-development-concurrency/deadlock-two-locks.pdf}
     \end{center}
