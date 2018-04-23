@@ -42,8 +42,7 @@ Embedded Linux system development training\\
 	Lightweight building blocks for embedded systems \par
     Embedded system development tools \par
 	Embedded application development and debugging \par
-	Practical labs with the ARM based SAMA5D3 Xplained board from
-        Microchip \\
+	Practical labs with the Pico PI IMX7 board from Wandboard.org \\
     \hline
     {\bf Materials} &
     Check that the course contents correspond to your needs:
@@ -76,12 +75,13 @@ Embedded Linux system development training\\
 
     {\bf Alternative version} & Full version of the Embedded Linux
     system development course, ({\bf 5 days long}) with 2 additional
-    half days with practical labs:
+    half days with practical labs (run on different hardware:
+    Microchip SAMA5D3 Xplained with an ARM Cortex-A5 SoC)
     \begin{itemize}
     \item Flash filesystems
     \item Real time
     \end{itemize}
-    \url{http://bootlin.com/doc/training/embedded-linux/embedded-linux-agenda.pdf}. \\
+    \url{http://bootlin.com/doc/training/embedded-linux/embedded-linux-agenda.pdf}.\\
     \hline
 
   \end{tabularx}
@@ -118,26 +118,22 @@ Embedded Linux system development training\\
 \feagendatwocolumn
 {Hardware}
 {
-	Using the Microchip SAMA5D3 Xplained board in all practical labs
-	SAMA5D36 (Cortex A5) CPU from Microchip, which features:
-
+	In all practical labs, using the PICO PI IMX7 board from
+	Wandboard which features:
   \begin{itemize}
-  \item USB powered
-  \item 256 MB DDR2 RAM
-  \item 256 MB NAND flash
-  \item 2 Ethernet ports (Gigabit + 100 Mbit)
-  \item 2 USB 2.0 host ports
-  \item 1 USB device port
-  \item 1 MMC/SD slot
-  \item 3.3 V serial port (like Beaglebone Black)
-  \item Arduino R3-compatible header
-  \item Misc: JTAG, buttons, LEDs
+  \item 1 GHz, i.MX7 Dual Cortex-A7 SoC from NXP
+  \item 512 MB DDR3L RAM
+  \item 4 GFB eMMC storage 
+  \item 1 Gigabit Ethernet port
+  \item Bluetooth and WiFi
+  \item 1 USB 2.0 host port
+  \item Powered through 1 USB OTG (type-C) port
   \end{itemize}
 }
 {}
 {
   \begin{center}
-    \includegraphics[height=5cm]{../slides/xplained-board/xplained-board.png}
+    \includegraphics[height=5cm]{../slides/pico-pi-imx7/pico-pi-imx7.png}
   \end{center}
 }
 
@@ -199,7 +195,7 @@ Embedded Linux system development training\\
 \feagendatwocolumn
 {Lab - Bootloader and U-boot}
 {
-  {\em Using the Microchip SAMA5D3 Xplained board}
+  {\em Using the i.MX7 board}
   \begin{itemize}
   \item Set up serial communication with the board.
   \item Configure, compile and install the first-stage bootloader
@@ -246,7 +242,7 @@ Embedded Linux system development training\\
 \feagendaonecolumn
 {Lab - Kernel cross-compiling and booting}
 {
-  {\em Using the Microchip Xplained board}
+  {\em Using the i.MX7 board}
   \begin{itemize}
   \item Configuring the Linux kernel and cross-compiling it for the ARM board.
   \item Downloading your kernel on the board through U-boot's tftp client.
@@ -281,7 +277,7 @@ Embedded Linux system development training\\
 \feagendaonecolumn
 {Lab – Tiny root filesystem built from scratch with BusyBox}
 {
-  {\em Using the Microchip Xplained board}
+  {\em Using the i.MX7 board}
   \begin{itemize}
   \item Now build a basic root filesystem from scratch for your ARM system
   \item Setting up a kernel to boot your system on a workstation
@@ -372,7 +368,7 @@ Embedded Linux system development training\\
 }
 {Lab - System build with Buildroot}
 {
-  {\em Using the Microchip Xplained board}
+  {\em Using the i.MX7 board}
   \begin{itemize}
   \item Using Buildroot to rebuild the same system as in the previous lab.
   \item Seeing how easier it gets.
@@ -400,7 +396,7 @@ Embedded Linux system development training\\
 \feagendaonecolumn
 {Lab – Application development and debugging}
 {
-  {\em On the Microchip Xplained board}
+  {\em On the i.MX7 board}
   \begin{itemize}
   \item Develop and compile an application relying on the ncurses library
   \item Using strace, ltrace and gdbserver to debug a crappy application
